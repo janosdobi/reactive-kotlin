@@ -1,0 +1,27 @@
+logging:
+  level:
+    root: info
+    home:
+      dj: debug
+spring:
+  profiles:
+    active: local
+  application:
+    name: "kotlin-website"
+  main:
+    banner-mode: off
+    lazy-initialization: false
+  data:
+    mongodb:
+      host: localhost
+      database: mongo-kotlin-website
+      port: 27017
+      username: ${MONGO_USERNAME}
+      password: ${MONGO_PASSWORD}
+      authentication-database: admin
+server:
+  ssl:
+    enabled: false
+  servlet:
+    context-path: /${spring.application.name}
+  port: 8080
