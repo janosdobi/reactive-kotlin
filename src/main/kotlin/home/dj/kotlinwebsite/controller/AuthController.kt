@@ -18,7 +18,7 @@ class AuthController(
     private val userService: UserService,
     private val passwordEncoder: PasswordEncoder
 ) {
-    @PostMapping(value = ["/authenticate"])
+    @PostMapping(value = ["/authenticate"], consumes = ["application/json"])
     fun createAuthenticationToken(@RequestBody authRequest: AuthRequest): Mono<ResponseEntity<AuthResponse>> {
         return userService.getUser(authRequest.username).map { user ->
             if (passwordEncoder.encode(authRequest.password).equals(user.password)) {

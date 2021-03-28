@@ -17,7 +17,7 @@ class RestController(
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     fun getAll() = persistentObjectRepo.findAll()
 
-    @PostMapping("/new")
+    @PostMapping("/new", consumes = ["application/json"])
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     fun saveNew(@RequestBody entity: PersistentObject) = persistentObjectRepo.save(entity)
 
