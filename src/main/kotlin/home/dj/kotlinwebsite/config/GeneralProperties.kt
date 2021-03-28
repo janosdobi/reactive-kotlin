@@ -8,4 +8,7 @@ import org.springframework.context.annotation.Configuration
 class GeneralProperties {
     lateinit var password: String
     lateinit var username: String
+    lateinit var secret: String
+    lateinit var iteration: Integer
+    lateinit var keylength: Integer
 }

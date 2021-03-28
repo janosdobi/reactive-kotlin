@@ -3,7 +3,7 @@ package home.dj.kotlinwebsite.model
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
-class UserDetailsImpl(
+class User(
     private val name: String,
     private val password: String
 ) : UserDetails {

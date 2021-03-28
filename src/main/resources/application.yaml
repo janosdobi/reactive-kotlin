@@ -27,3 +27,6 @@ home:
   dj:
     username: ${USER_NAME}
     password: ${USER_PASSWORD}
+    secret: ${PASSWORD_ENCODE_SECRET}
+    iteration: ${PASSWORD_ENCODE_ITERATION}
+    keylength: ${PASSWORD_ENCODE_KEYLENGTH}

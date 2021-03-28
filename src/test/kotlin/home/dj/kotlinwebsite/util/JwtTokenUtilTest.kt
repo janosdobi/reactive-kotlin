@@ -1,6 +1,6 @@
 package home.dj.kotlinwebsite.util
 
-import home.dj.kotlinwebsite.model.UserDetailsImpl
+import home.dj.kotlinwebsite.model.User
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -16,7 +16,7 @@ internal class JwtTokenUtilTest {
     @Test
     fun generateToken() {
         //given
-        val userDetails = UserDetailsImpl("test", "test")
+        val userDetails = User("test", "test")
 
         //when
         val token = jwtTokenUtil.generateToken(userDetails)

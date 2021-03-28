@@ -40,14 +40,14 @@ class JwtTokenUtil {
         return claimsResolver.invoke(claims)
     }
 
-    private fun getAllClaimsFromToken(token: String): Claims {
+    fun getAllClaimsFromToken(token: String): Claims {
         return Jwts.parserBuilder()
             .setSigningKey(privateKey)
             .build()
             .parseClaimsJws(token).body
     }
 
-    private fun isTokenExpired(token: String): Boolean {
+    fun isTokenExpired(token: String): Boolean {
         val expiration: Date = getExpirationDateFromToken(token)
         return expiration.before(Date())
     }
