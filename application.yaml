@@ -25,6 +25,7 @@ server:
   servlet:
     context-path: /${spring.application.name}
   port: 8080
-jwt:
-  key: ${JWT_KEY}
-  pub: ${JWT_PUB}
+home:
+  dj:
+    username: ${USER_NAME}
+    password: ${USER_PASSWORD}

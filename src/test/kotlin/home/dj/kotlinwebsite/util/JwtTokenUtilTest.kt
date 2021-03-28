@@ -2,11 +2,12 @@ package home.dj.kotlinwebsite.util
 
 import home.dj.kotlinwebsite.model.UserDetailsImpl
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
-@SpringBootTest
+@SpringBootTest(classes = [JwtTokenUtil::class])
 internal class JwtTokenUtilTest {
 
     @Autowired
@@ -15,7 +16,7 @@ internal class JwtTokenUtilTest {
     @Test
     fun generateToken() {
         //given
-        val userDetails = UserDetailsImpl()
+        val userDetails = UserDetailsImpl("test", "test")
 
         //when
         val token = jwtTokenUtil.generateToken(userDetails)
@@ -23,5 +24,6 @@ internal class JwtTokenUtilTest {
 
         //then
         assertEquals("test", usernameFromToken)
+        assertTrue(jwtTokenUtil.validateToken(token, userDetails))
     }
 }

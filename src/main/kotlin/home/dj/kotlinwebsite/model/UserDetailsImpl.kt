@@ -3,31 +3,21 @@ package home.dj.kotlinwebsite.model
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
-class UserDetailsImpl : UserDetails {
-    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        TODO("Not yet implemented")
-    }
+class UserDetailsImpl(
+    private val name: String,
+    private val password: String
+) : UserDetails {
+    override fun getAuthorities() = listOf(GrantedAuthority { "USER" })
 
-    override fun getPassword(): String {
-        TODO("Not yet implemented")
-    }
+    override fun getPassword() = password
 
-    override fun getUsername() = "test"
+    override fun getUsername() = name
 
-    override fun isAccountNonExpired(): Boolean {
-        TODO("Not yet implemented")
-    }
+    override fun isAccountNonExpired() = true
 
-    override fun isAccountNonLocked(): Boolean {
-        TODO("Not yet implemented")
-    }
+    override fun isAccountNonLocked() = true
 
-    override fun isCredentialsNonExpired(): Boolean {
-        TODO("Not yet implemented")
-    }
+    override fun isCredentialsNonExpired() = true
 
-    override fun isEnabled(): Boolean {
-        TODO("Not yet implemented")
-    }
-
+    override fun isEnabled() = true
 }
