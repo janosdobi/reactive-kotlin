@@ -1,4 +1,4 @@
-package home.dj.kotlinwebsite.config
+package home.dj.kotlinwebsite.config.security
 
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.security.core.context.SecurityContext

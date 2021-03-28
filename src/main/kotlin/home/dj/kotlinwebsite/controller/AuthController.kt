@@ -20,9 +20,9 @@ class AuthController(
 ) {
     @PostMapping(value = ["/authenticate"])
     fun createAuthenticationToken(@RequestBody authRequest: AuthRequest): Mono<ResponseEntity<AuthResponse>> {
-        return userService.getUser(authRequest.username).map { userDetails ->
-            if (passwordEncoder.encode(authRequest.password).equals(userDetails.password)) {
-                return@map ResponseEntity.ok(AuthResponse(jwtTokenUtil.generateToken(userDetails)))
+        return userService.getUser(authRequest.username).map { user ->
+            if (passwordEncoder.encode(authRequest.password).equals(user.password)) {
+                return@map ResponseEntity.ok(AuthResponse(jwtTokenUtil.generateToken(user)))
             } else {
                 return@map ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
             }

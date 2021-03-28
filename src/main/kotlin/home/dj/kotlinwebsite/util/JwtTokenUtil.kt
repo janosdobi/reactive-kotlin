@@ -31,6 +31,10 @@ class JwtTokenUtil {
         return getClaimFromToken(token, Claims::getSubject)
     }
 
+    fun getRoleFromToken(token: String): String {
+        return getClaimFromToken(token) { claims -> claims["role"] as String }
+    }
+
     fun getExpirationDateFromToken(token: String): Date {
         return getClaimFromToken(token, Claims::getExpiration)
     }
@@ -53,7 +57,7 @@ class JwtTokenUtil {
     }
 
     fun generateToken(userDetails: UserDetails): String {
-        val claims: Map<String, Any> = HashMap()
+        val claims = mapOf("role" to userDetails.authorities.first().authority)
         return doGenerateToken(claims, userDetails.username)
     }
 

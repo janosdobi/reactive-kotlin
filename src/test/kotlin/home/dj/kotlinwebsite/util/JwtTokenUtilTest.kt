@@ -1,6 +1,6 @@
 package home.dj.kotlinwebsite.util
 
-import home.dj.kotlinwebsite.model.User
+import home.dj.kotlinwebsite.model.auth.User
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test

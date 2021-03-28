@@ -1,4 +1,4 @@
-package home.dj.kotlinwebsite.config
+package home.dj.kotlinwebsite.config.security
 
 import org.springframework.web.reactive.config.CorsRegistry
 import org.springframework.web.reactive.config.WebFluxConfigurer

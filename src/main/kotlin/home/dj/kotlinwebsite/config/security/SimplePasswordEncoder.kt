@@ -1,5 +1,6 @@
-package home.dj.kotlinwebsite.config
+package home.dj.kotlinwebsite.config.security
 
+import home.dj.kotlinwebsite.config.GeneralProperties
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
 import java.security.spec.InvalidKeySpecException

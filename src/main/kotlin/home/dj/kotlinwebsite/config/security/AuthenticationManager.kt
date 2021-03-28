@@ -1,4 +1,4 @@
-package home.dj.kotlinwebsite.config
+package home.dj.kotlinwebsite.config.security
 
 import home.dj.kotlinwebsite.util.JwtTokenUtil
 import io.jsonwebtoken.Claims
@@ -8,7 +8,6 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
-
 
 @Component
 class AuthenticationManager(
@@ -23,13 +22,11 @@ class AuthenticationManager(
                 return Mono.empty()
             }
 
-            val claims: Claims = jwtTokenUtil.getAllClaimsFromToken(authToken)
-
             return Mono.just(
                 UsernamePasswordAuthenticationToken(
-                    claims.subject,
+                    jwtTokenUtil.getUsernameFromToken(authToken),
                     null,
-                    listOf(GrantedAuthority { "ROLE_USER" })
+                    listOf(GrantedAuthority { jwtTokenUtil.getRoleFromToken(authToken) })
                 )
             )
         } catch (e: Exception) {

@@ -30,3 +30,5 @@ home:
     secret: ${PASSWORD_ENCODE_SECRET}
     iteration: ${PASSWORD_ENCODE_ITERATION}
     keylength: ${PASSWORD_ENCODE_KEYLENGTH}
+    admin: ${ADMIN_USER}
+    adminPass: ${ADMIN_PASS}

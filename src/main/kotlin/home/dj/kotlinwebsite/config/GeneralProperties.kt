@@ -11,4 +11,6 @@ class GeneralProperties {
     lateinit var secret: String
     lateinit var iteration: Integer
     lateinit var keylength: Integer
+    lateinit var admin: String
+    lateinit var adminPass: String
 }
