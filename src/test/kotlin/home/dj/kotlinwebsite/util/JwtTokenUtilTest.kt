@@ -1,5 +1,6 @@
 package home.dj.kotlinwebsite.util
 
+import home.dj.kotlinwebsite.model.auth.Role
 import home.dj.kotlinwebsite.model.auth.User
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -16,7 +17,7 @@ internal class JwtTokenUtilTest {
     @Test
     fun generateToken() {
         //given
-        val userDetails = User("test", "test")
+        val userDetails = User("test", "test", Role.ROLE_USER.name)
 
         //when
         val token = jwtTokenUtil.generateToken(userDetails)
