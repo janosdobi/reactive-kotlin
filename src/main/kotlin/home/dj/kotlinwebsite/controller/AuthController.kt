@@ -9,16 +9,18 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 
 @RestController
+@RequestMapping("/api")
 class AuthController(
     private val jwtTokenUtil: JwtTokenUtil,
     private val userService: UserService,
     private val passwordEncoder: PasswordEncoder
 ) {
-    @PostMapping(value = ["/authenticate"], consumes = ["application/json"])
+    @PostMapping(value = ["/v1/authenticate"], consumes = ["application/json"])
     fun createAuthenticationToken(@RequestBody authRequest: AuthRequest): Mono<ResponseEntity<AuthResponse>> {
         return userService.getUser(authRequest.username).map { user ->
             if (passwordEncoder.encode(authRequest.password).equals(user.password)) {

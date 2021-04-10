@@ -1,23 +1,27 @@
 package home.dj.kotlinwebsite.controller
 
-import home.dj.kotlinwebsite.persistence.PersistentObjectRepository
+import home.dj.kotlinwebsite.service.ViewAuthorizer
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
-import org.thymeleaf.spring5.context.webflux.ReactiveDataDriverContextVariable
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.client.HttpClientErrorException
 
 
 @Controller
+@RequestMapping("/view")
 class ViewController(
-    private val repo: PersistentObjectRepository
+    private val viewAuthorizer: ViewAuthorizer
 ) {
 
-    @RequestMapping("/")
-    fun index(model: Model): String? {
-
-        val reactiveDataDrivenMode = ReactiveDataDriverContextVariable(repo.findAll(), 1)
-        model.addAttribute("entities", reactiveDataDrivenMode)
-
+    @GetMapping("/home")
+    fun home(model: Model, @RequestParam(required = false) token: String?): String? {
+        try {
+            viewAuthorizer.authorize(token)
+        } catch (ex: HttpClientErrorException) {
+            return "error-yourfault"
+        }
         return "home"
     }
 }

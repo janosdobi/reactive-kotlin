@@ -38,7 +38,10 @@ class WebSecurityConfiguration(
             .securityContextRepository(securityContextRepository)
             .authorizeExchange()
             .pathMatchers(HttpMethod.OPTIONS).permitAll()
-            .pathMatchers("/authenticate").permitAll()
+            .pathMatchers("/js/**").permitAll()
+            .pathMatchers("/styles/**").permitAll()
+            .pathMatchers("/", "/login", "/view/**").permitAll()
+            .pathMatchers("/api/v1/authenticate").permitAll()
             .anyExchange().authenticated()
             .and().build()
     }
