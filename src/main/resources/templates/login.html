@@ -1,30 +1,33 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-  <title>You shall not pass</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous"/>
-  <link rel="stylesheet" th:href="@{/styles/login.css}"/>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title>You shall not pass</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous"/>
+    <link rel="stylesheet" th:href="@{/styles/custom.css}"/>
 </head>
 <body class="main-bg">
-<div class="login-container text-c animated flipInX">
-  <div>
-    <h1 class="logo-badge text-whitesmoke"><span class="fa fa-user-circle"></span></h1>
-  </div>
-  <h3 class="text-whitesmoke">Go away!</h3>
-  <div class="container-content">
-    <form action="/api/v1/authenticate" class="margin-t" id="loginForm">
-      <div class="form-group">
-        <input type="text" class="form-control" placeholder="Username" required="" id="usernameInput">
-      </div>
-      <div class="form-group">
-        <input type="password" class="form-control" placeholder="*****" required="" id="passwordInput">
-      </div>
-      <button type="submit" class="form-button button-l margin-b">Sign In</button>
-    </form>
-  </div>
+<div class="container-fluid login-container">
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4 main-content">
+            <p class="h1 text-center text-light">Authenticate!</p>
+            <form action="/api/v1/authenticate" class="margin-t" id="loginForm">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Username" id="usernameInput"/>
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" placeholder="Password" id="passwordInput"/>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-light btn-login">Sign In</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
 </div>
 <p class="text-center text-secondary">Created by Janos. All rights reserved.</p>
 

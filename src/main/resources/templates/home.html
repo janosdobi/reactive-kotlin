@@ -1,72 +1,43 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title>Why are you gae?</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
           integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous"/>
+    <link rel="stylesheet" th:href="@{/styles/custom.css}"/>
 </head>
-<body>
-<div class="container-fluid bg-dark">
+<body class="main-bg">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-sm">
-            <br>
-            <br>
-            <p class="h1 text-center text-light">Define It!</p>
-            <br>
-            <br>
-            <br>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm">
-            <!--empty/-->
-        </div>
-        <div class="col-sm">
-            <div class="text-center">
-                <button type="submit" class="btn btn-outline-light btn-lg" onclick="newGame()">Start new game</button>
+        <div class="col-md-4"></div>
+        <div class="col-md-4 main-content">
+            <p class="h1 text-center text-light">Yolo</p>
+            <div class="form-group">
+                <div class="text-center">
+                    <button type="submit" class="btn btn-outline-light" onclick="newGame()">Start new game
+                    </button>
+                </div>
             </div>
-            <br>
-            <br>
-            <br>
-            <div class="text-center">
-                <form action="/joingame" method="post" id="joinGameForm" class="form-inline">
-                    <button type="submit" class="btn btn-outline-light btn-lg">Join existing game with code:</button>
-                    <input type="text" class="form-control" placeholder="Enter game id" name="game_id"/>
-                </form>
+            <div class="form-group">
+                <div class="text-center">
+                    <form action="/joingame" method="post" id="joinGameForm" class="form-inline">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-outline-light">Join existing game with code:
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control game-input" placeholder="Enter game id" name="game_id"/>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-        <div class="col-sm">
-            <!--empty/-->
-        </div>
+        <div class="col-md-4"></div>
     </div>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
+    <p class="text-center text-secondary">Created by Janos. All rights reserved.</p>
 </div>
-<p class="text-center text-secondary">Created by Janos. All rights reserved.</p>
 
 <script
         src="https://code.jquery.com/jquery-3.5.1.min.js"
@@ -78,7 +49,6 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
         integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
         crossorigin="anonymous"></script>
-{% load static %}
 <script type="text/javascript" th:src="@{/js/home.js}"></script>
 </body>
 </html>

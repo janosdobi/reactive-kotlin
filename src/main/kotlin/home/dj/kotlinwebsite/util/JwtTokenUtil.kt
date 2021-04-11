@@ -57,7 +57,10 @@ class JwtTokenUtil {
     }
 
     fun generateToken(userDetails: UserDetails): String {
-        val claims = mapOf("role" to userDetails.authorities.first().authority)
+        val claims = mapOf(
+            "role" to userDetails.authorities.first().authority,
+            "uid" to UUID.randomUUID()
+        )
         return doGenerateToken(claims, userDetails.username)
     }
 
