@@ -1,26 +1,33 @@
 package home.dj.kotlinwebsite.controller
 
-import home.dj.kotlinwebsite.model.PersistentObject
-import home.dj.kotlinwebsite.persistence.PersistentObjectRepository
-import org.springframework.security.access.prepost.PreAuthorize
+import home.dj.kotlinwebsite.model.GameDTO
+import home.dj.kotlinwebsite.model.PlayerDTO
+import home.dj.kotlinwebsite.persistence.document.Game
+import home.dj.kotlinwebsite.persistence.repo.GameRepository
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import reactor.core.publisher.Mono
+import java.security.Principal
+
+private val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 
 @RestController
+@RequestMapping("/api")
 class RestController(
-    private val persistentObjectRepo: PersistentObjectRepository
+    private val gameRepository: GameRepository
 ) {
 
-    @GetMapping("/all")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
-    fun getAll() = persistentObjectRepo.findAll()
+    @GetMapping("v1/new-game")
+    fun newGame(principal: Principal): Mono<ResponseEntity<GameDTO>> {
+        return gameRepository
+            .save(Game(generateGameCode(), emptyList()))
+            .map { game -> ResponseEntity.ok(GameDTO(game.code, game.players.map { PlayerDTO(it.name, it.sub) })) }
+    }
 
-    @PostMapping("/new", consumes = ["application/json"])
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    fun saveNew(@RequestBody entity: PersistentObject) = persistentObjectRepo.save(entity)
-
-    @GetMapping("/delete-all")
-    fun deleteAll() = persistentObjectRepo.deleteAll()
+    private fun generateGameCode() = (1..6)
+        .map { i -> kotlin.random.Random.nextInt(0, charPool.size) }
+        .map(charPool::get)
+        .joinToString("");
 }

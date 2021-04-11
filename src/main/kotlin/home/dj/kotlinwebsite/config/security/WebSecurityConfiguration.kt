@@ -41,7 +41,7 @@ class WebSecurityConfiguration(
             .pathMatchers("/favicon.ico").permitAll()
             .pathMatchers("/js/**").permitAll()
             .pathMatchers("/styles/**").permitAll()
-            .pathMatchers("/", "/login", "/view/**").permitAll()
+            .pathMatchers("/", "/login", "/home", "/game/**").permitAll()
             .pathMatchers("/api/v1/authenticate").permitAll()
             .anyExchange().authenticated()
             .and().build()

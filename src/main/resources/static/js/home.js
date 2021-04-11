@@ -7,11 +7,13 @@ $(window).on("load", function () {
 
 
 function newGame() {
+    const token = sessionStorage.getItem('auth');
     $.get({
-        url: "newgame",
-        headers: { "Authorization": sessionStorage.getItem('auth') }
-    }, function (response) {
-        window.location.replace("/game/" + response.gameId);
+        url: "api/v1/new-game",
+        headers: {"Authorization": "Bearer " + token},
+        success: function (response) {
+            window.location.replace("game/" + response.code + "?token=" + token);
+        }
     });
 }
 
@@ -44,11 +46,11 @@ $("#joinGameForm").submit(function (event) {
 });
 
 
-function getFormData($form){
+function getFormData($form) {
     var unindexed_array = $form.serializeArray();
     var indexed_array = {};
 
-    $.map(unindexed_array, function(n, i){
+    $.map(unindexed_array, function (n, i) {
         indexed_array[n['name']] = n['value'];
     });
 

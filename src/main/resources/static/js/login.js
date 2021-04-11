@@ -24,7 +24,7 @@ $("#loginForm").submit(function (event) {
         success: function (response) {
             const token = response['token'];
             sessionStorage.setItem('auth', token)
-            window.location.replace("view/home?token=" + token)
+            window.location.replace("home?token=" + token)
         },
         error: () => alert("Fuck off!")
     });

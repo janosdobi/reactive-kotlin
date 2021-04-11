@@ -9,61 +9,16 @@
     <link rel="stylesheet" th:href="@{/styles/custom.css}"/>
 </head>
 <body class="main-bg">
-<div class="container-fluid text-c bg-dark">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-sm">
-            <br>
-            <br>
-            <h3 class="text-whitesmoke">Define It!</h3>
-            <br>
-            <br>
-            <br>
+        <div class="col-md-4"></div>
+        <div class="col-md-4 main-content">
+            <p class="h1 text-center text-light">Do you think this is a m************g game?</p>
         </div>
+        <div class="col-md-4"></div>
     </div>
-    <div class="row">
-        <div class="col-sm">
-            <!--empty/-->
-        </div>
-        <div class="col-sm">
-            <div class="text-center">
-                <p class="text-center text-light"></p>
-                <p class="text-center text-light">Game id: {{game_id}}</p>
-            </div>
-            <br>
-            <br>
-            <br>
-            <br>
-        </div>
-        <div class="col-sm">
-            <!--empty/-->
-        </div>
-    </div>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
+    <p class="text-center text-secondary">Created by Janos. All rights reserved.</p>
 </div>
-<p class="text-center text-secondary">Created by Janos. All rights reserved.</p>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
@@ -74,7 +29,6 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
         integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
         crossorigin="anonymous"></script>
-{% load static %}
-<script src="{% static 'defineit/game.js' %}"></script>
+<script type="text/javascript" th:src="@{/js/game.js}"></script>
 </body>
 </html>
