@@ -7,6 +7,25 @@ $(window).on("load", function () {
 
 function newPlayer() {
     sessionStorage.setItem('player', $("#playerName").val());
+    $("#home").html("<div class=\"form-group\">\n" +
+        "                    <div class=\"text-center\">\n" +
+        "                        <button type=\"submit\" class=\"btn btn-light btn-login\" onclick=\"newGame()\">start new game\n" +
+        "                        </button>\n" +
+        "                    </div>\n" +
+        "                </div>\n" +
+        "                <div class=\"form-group\">\n" +
+        "                    <div class=\"text-center\">\n" +
+        "                        <form action=\"/joingame\" method=\"post\" id=\"joinGameForm\" class=\"form-inline\">\n" +
+        "                            <div class=\"form-group\">\n" +
+        "                                <button type=\"submit\" class=\"btn btn-light btn-login\">join existing game with code:\n" +
+        "                                </button>\n" +
+        "                            </div>\n" +
+        "                            <div class=\"form-group\">\n" +
+        "                                <input type=\"text\" class=\"form-control\" placeholder=\"Enter game id\" name=\"gameId\"/>\n" +
+        "                            </div>\n" +
+        "                        </form>\n" +
+        "                    </div>\n" +
+        "                </div>")
 }
 
 function newGame() {
