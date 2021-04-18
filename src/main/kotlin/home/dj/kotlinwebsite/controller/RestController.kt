@@ -28,7 +28,10 @@ class RestController(
             .flatMap {
                 gameRepository.save(
                     Game(
-                        generateGameCode(),
+                        (1..6)
+                            .map { kotlin.random.Random.nextInt(0, charPool.size) }
+                            .map(charPool::get)
+                            .joinToString(""),
                         listOf(Player(principal.name, it.playerName))
                     )
                 )
@@ -63,9 +66,4 @@ class RestController(
                 )
             }
     }
-
-    private fun generateGameCode() = (1..6)
-        .map { kotlin.random.Random.nextInt(0, charPool.size) }
-        .map(charPool::get)
-        .joinToString("");
 }
