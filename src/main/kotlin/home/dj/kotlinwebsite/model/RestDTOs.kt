@@ -15,6 +15,10 @@ data class GameDTO(
 )
 
 data class PlayerDTO(
-    val name: String,
-    val sub: String
+    val uid: String,
+    val name: String
+)
+
+data class NewGameRequestDTO (
+    val playerName: String
 )

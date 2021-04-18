@@ -24,7 +24,7 @@ class AuthenticationManager(
 
             return Mono.just(
                 UsernamePasswordAuthenticationToken(
-                    jwtTokenUtil.getUsernameFromToken(authToken),
+                    jwtTokenUtil.getUidFromToken(authToken),
                     null,
                     listOf(GrantedAuthority { jwtTokenUtil.getRoleFromToken(authToken) })
                 )

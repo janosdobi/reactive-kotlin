@@ -11,6 +11,8 @@ import java.security.PublicKey
 import java.util.*
 
 private const val JWT_TOKEN_VALIDITY = (2 * 60 * 60).toLong()
+private const val UID = "uid"
+private const val ROLE = "role"
 
 @Component
 class JwtTokenUtil {
@@ -27,17 +29,13 @@ class JwtTokenUtil {
         privateKey = kp.private as PrivateKey
     }
 
-    fun getUsernameFromToken(token: String): String {
-        return getClaimFromToken(token, Claims::getSubject)
-    }
+    fun getUidFromToken(token: String) = getClaimFromToken(token) { claims -> claims[UID] as String }
 
-    fun getRoleFromToken(token: String): String {
-        return getClaimFromToken(token) { claims -> claims["role"] as String }
-    }
+    fun getUsernameFromToken(token: String): String = getClaimFromToken(token, Claims::getSubject)
 
-    fun getExpirationDateFromToken(token: String): Date {
-        return getClaimFromToken(token, Claims::getExpiration)
-    }
+    fun getRoleFromToken(token: String): String = getClaimFromToken(token) { claims -> claims[ROLE] as String }
+
+    fun getExpirationDateFromToken(token: String): Date = getClaimFromToken(token, Claims::getExpiration)
 
     fun <T> getClaimFromToken(token: String, claimsResolver: (Claims) -> T): T {
         val claims: Claims = getAllClaimsFromToken(token)
@@ -58,8 +56,8 @@ class JwtTokenUtil {
 
     fun generateToken(userDetails: UserDetails): String {
         val claims = mapOf(
-            "role" to userDetails.authorities.first().authority,
-            "uid" to UUID.randomUUID()
+            ROLE to userDetails.authorities.first().authority,
+            UID to UUID.randomUUID()
         )
         return doGenerateToken(claims, userDetails.username)
     }

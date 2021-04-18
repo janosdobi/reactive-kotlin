@@ -13,10 +13,25 @@
     <div class="row">
         <div class="col-md-4"></div>
         <div class="col-md-4 main-content">
-            <p class="h1 text-center text-light">Yolo</p>
+            <p class="h1 text-center text-light">yolo</p>
             <div class="form-group">
                 <div class="text-center">
-                    <button type="submit" class="btn btn-outline-light" onclick="newGame()">Start new game
+                    <div class="form-group">
+                        <div class="form-group">
+                            <p class="text-center text-light">how shall I describe you?</p>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Enter a nickname" id="playerName"/>
+                        </div>
+                        <div class="form-group">
+                            <button id="playerNameSubmit" type="submit" class="btn btn-light btn-login" onclick="newPlayer()">save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="text-center">
+                    <button type="submit" class="btn btn-light btn-login" onclick="newGame()">start new game
                     </button>
                 </div>
             </div>
@@ -24,7 +39,7 @@
                 <div class="text-center">
                     <form action="/joingame" method="post" id="joinGameForm" class="form-inline">
                         <div class="form-group">
-                            <button type="submit" class="btn btn-outline-light">Join existing game with code:
+                            <button type="submit" class="btn btn-light btn-login">join existing game with code:
                             </button>
                         </div>
                         <div class="form-group">

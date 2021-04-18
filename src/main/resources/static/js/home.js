@@ -5,12 +5,24 @@ $(window).on("load", function () {
     window.history.replaceState({}, null, shortURL);
 });
 
+function newPlayer() {
+    sessionStorage.setItem('player', $("#playerName").val());
+}
 
 function newGame() {
     const token = sessionStorage.getItem('auth');
-    $.get({
+    const playerName = sessionStorage.getItem('player');
+    const requestBody = {
+        playerName: playerName
+    }
+    console.log(requestBody);
+    $.post({
         url: "api/v1/new-game",
-        headers: {"Authorization": "Bearer " + token},
+        headers: {
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json"
+        },
+        data: JSON.stringify(requestBody),
         success: function (response) {
             window.location.replace("game/" + response.code + "?token=" + token);
         }
