@@ -15,15 +15,13 @@ function newPlayer() {
         "                </div>\n" +
         "                <div class=\"form-group\">\n" +
         "                    <div class=\"text-center\">\n" +
-        "                        <form action=\"/joingame\" method=\"post\" id=\"joinGameForm\" class=\"form-inline\">\n" +
         "                            <div class=\"form-group\">\n" +
-        "                                <button type=\"submit\" class=\"btn btn-light btn-login\">join existing game with code:\n" +
+        "                                <button type=\"submit\" class=\"btn btn-light btn-login\" onclick=\"joinGame()\">join existing game with code:\n" +
         "                                </button>\n" +
         "                            </div>\n" +
         "                            <div class=\"form-group\">\n" +
-        "                                <input type=\"text\" class=\"form-control\" placeholder=\"Enter game id\" name=\"gameId\"/>\n" +
+        "                                <input type=\"text\" class=\"form-control\" placeholder=\"enter game id\" id=\"gameId\"/>\n" +
         "                            </div>\n" +
-        "                        </form>\n" +
         "                    </div>\n" +
         "                </div>")
 }
@@ -34,9 +32,29 @@ function newGame() {
     const requestBody = {
         playerName: playerName
     }
-    console.log(requestBody);
     $.post({
         url: "api/v1/new-game",
+        headers: {
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json"
+        },
+        data: JSON.stringify(requestBody),
+        success: function (response) {
+            window.location.replace("game/" + response.code + "?token=" + token);
+        }
+    });
+}
+
+function joinGame() {
+    const token = sessionStorage.getItem('auth');
+    const playerName = sessionStorage.getItem('player');
+    const gameId = $("#gameId").val()
+    const requestBody = {
+        gameId: gameId,
+        playerName: playerName
+    }
+    $.post({
+        url: "api/v1/join-game",
         headers: {
             "Authorization": "Bearer " + token,
             "Content-Type": "application/json"

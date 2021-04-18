@@ -19,6 +19,11 @@ data class PlayerDTO(
     val name: String
 )
 
-data class NewGameRequestDTO (
+data class NewGameRequestDTO(
+    val playerName: String
+)
+
+data class JoinGameRequestDTO(
+    val gameId: String,
     val playerName: String
 )
