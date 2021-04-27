@@ -28,10 +28,10 @@ class ViewController(
     fun game(model: Model, @RequestParam(required = false) token: String?, @PathVariable code: String): String? {
         try {
             viewAuthorizer.authorize(token)
+            model.addAttribute("gameCode", code)
         } catch (ex: HttpClientErrorException) {
             return "error-yourfault"
         }
-        //TODO present code on page
         return "game"
     }
 }
