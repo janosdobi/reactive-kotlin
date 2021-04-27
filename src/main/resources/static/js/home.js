@@ -40,6 +40,7 @@ function newGame() {
         },
         data: JSON.stringify(requestBody),
         success: function (response) {
+            sessionStorage.setItem("gameCode", response.code)
             window.location.replace("game/" + response.code + "?token=" + token);
         }
     });
@@ -61,6 +62,7 @@ function joinGame() {
         },
         data: JSON.stringify(requestBody),
         success: function (response) {
+            sessionStorage.setItem("gameCode", response.code)
             window.location.replace("game/" + response.code + "?token=" + token);
         }
     });
