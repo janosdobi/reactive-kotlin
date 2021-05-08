@@ -9,7 +9,7 @@ plugins {
 
 group = "home.dj"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_14
+java.sourceCompatibility = JavaVersion.VERSION_16
 
 repositories {
     mavenCentral()
