@@ -23,8 +23,8 @@ class SimplePasswordEncoder(
                 .generateSecret(PBEKeySpec(
                     rawPassword.toString().toCharArray(),
                     props.secret.toByteArray(),
-                    props.iteration.toInt(),
-                    props.keylength.toInt()))
+                    props.iteration,
+                    props.keyLength))
                 .encoded
             Base64.getEncoder().encodeToString(result)
         } catch (ex: NoSuchAlgorithmException) {

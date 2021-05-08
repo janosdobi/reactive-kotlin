@@ -9,8 +9,8 @@ class GeneralProperties {
     lateinit var password: String
     lateinit var username: String
     lateinit var secret: String
-    lateinit var iteration: Integer
-    lateinit var keylength: Integer
+    var iteration: Int = 0
+    var keyLength: Int = 0
     lateinit var admin: String
     lateinit var adminPass: String
 }
