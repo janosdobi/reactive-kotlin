@@ -1,25 +1,23 @@
 package home.dj.kotlinwebsite.controller
 
-import home.dj.kotlinwebsite.model.GameDTO
-import home.dj.kotlinwebsite.model.JoinGameRequestDTO
-import home.dj.kotlinwebsite.model.NewGameRequestDTO
-import home.dj.kotlinwebsite.model.PlayerDTO
+import home.dj.kotlinwebsite.model.*
 import home.dj.kotlinwebsite.persistence.document.Game
 import home.dj.kotlinwebsite.persistence.document.Player
 import home.dj.kotlinwebsite.persistence.repo.GameRepository
+import home.dj.kotlinwebsite.service.GameEventListener
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 import java.security.Principal
 
-
 private val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 
 @RestController
 @RequestMapping("/api")
 class RestController(
-    private val gameRepository: GameRepository
+    private val gameRepository: GameRepository,
+    private val gameEventListener: GameEventListener
 ) {
 
     @PostMapping("v1/new-game", consumes = ["application/json"])
@@ -49,6 +47,7 @@ class RestController(
     @ResponseStatus(HttpStatus.CREATED)
     fun joinGame(principal: Principal, @RequestBody request: Mono<JoinGameRequestDTO>): Mono<GameDTO> {
         return request
+            .doOnNext { gameEventListener.onMessage(GameEventDTO("player-joined", it.playerName, it.gameId)) }
             .flatMap {
                 Mono.zip(
                     Mono.just(Player(principal.name, it.playerName)),

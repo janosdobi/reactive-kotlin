@@ -1,6 +1,6 @@
 package home.dj.kotlinwebsite.controller
 
-import home.dj.kotlinwebsite.service.ViewAuthorizer
+import home.dj.kotlinwebsite.service.CustomAuthorizer
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -11,7 +11,7 @@ import org.springframework.web.client.HttpClientErrorException
 
 @Controller
 class ViewController(
-    private val viewAuthorizer: ViewAuthorizer
+    private val viewAuthorizer: CustomAuthorizer
 ) {
 
     @GetMapping("/home")

@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono
 import java.lang.Exception
 
 @Component
-class ViewAuthorizer(
+class CustomAuthorizer(
     private val authenticationManager: AuthenticationManager
 ) {
     fun authorize(token: String?) {
