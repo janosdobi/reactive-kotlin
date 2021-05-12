@@ -41,6 +41,7 @@ class RestController(
                     game.players.map { PlayerDTO(it.uid, it.name) }
                 )
             }
+            .doOnNext { gameEventListener.createNewGame(it.code) }
     }
 
     @PostMapping("v1/join-game", consumes = ["application/json"])

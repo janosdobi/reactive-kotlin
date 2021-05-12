@@ -8,23 +8,22 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.HttpClientErrorException
-import reactor.core.publisher.ConnectableFlux
 import reactor.core.publisher.Flux
-import java.time.Duration
-import java.util.*
 
 @RestController
 class EventController(
     private val sseAuthorizer: CustomAuthorizer,
-    private val gameEventListener: GameEventListener,
-    private val connectableFlux: ConnectableFlux<GameEventDTO> = gameEventListener.createEventHotPublisher()
+    private val gameEventListener: GameEventListener
 ) {
 
     @GetMapping(value = ["game/v1/events"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-    fun gameEventStream(@RequestParam(required = false) token: String?): Flux<GameEventDTO> {
+    fun gameEventStream(
+        @RequestParam(required = false) token: String?,
+        @RequestParam gameCode: String?
+    ): Flux<GameEventDTO>? {
         return try {
             sseAuthorizer.authorize(token)
-            connectableFlux.autoConnect()
+            gameCode?.let { gameEventListener.getPublisherForGame(it)?.autoConnect() }
         } catch (ex: HttpClientErrorException) {
             Flux.empty()
         }

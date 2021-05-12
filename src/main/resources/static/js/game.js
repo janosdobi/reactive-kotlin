@@ -8,7 +8,8 @@ $(window).on("load", function () {
 
 function listenToEvents() {
     const token = sessionStorage.getItem("auth");
-    const eventSource = new EventSource("/game/v1/events?token=" + token);
+    const gameCode = sessionStorage.getItem("gameCode")
+    const eventSource = new EventSource("/game/v1/events?gameCode=" + gameCode + "&token=" + token);
 
     eventSource.onmessage = event => {
         let data = JSON.parse(event.data);
