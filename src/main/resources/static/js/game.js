@@ -2,17 +2,40 @@ $(window).on("load", function () {
     const longUrl = window.location.href
     let shortURL = longUrl.slice(0, longUrl.indexOf("?token="));
     window.history.replaceState({}, null, shortURL);
-    setupPage();
+    setupPage(shortURL);
     listenToEvents();
 });
 
-function setupPage() {
+function setupPage(shortUrl) {
+    //set player name in welcome tag
     const player = sessionStorage.getItem("player");
     if (player != null) {
         $('#welcome').text('Welcome ' + player + '!');
     }
+
+    //present players who already joined
+    getPlayersAlreadyJoined(sessionStorage.getItem("gameCode"), shortUrl);
 }
 
+function getPlayersAlreadyJoined(gameCode, url) {
+    const token = sessionStorage.getItem('auth');
+    const actualPlayer = sessionStorage.getItem('player')
+    const cleanUrl = url.slice(0, url.indexOf('/game/'));
+    $.get({
+        url: cleanUrl + "/api/v1/players/" + gameCode,
+        headers: {
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json"
+        },
+        success: function (response) {
+            if (response != null && response.length > 0) {
+                response
+                    .filter(player => actualPlayer !== player.name)
+                    .forEach(player => $("#players").append('<li class="p text-center text-light">' + player.name + "</li>"));
+            }
+        }
+    });
+}
 
 function listenToEvents() {
     const token = sessionStorage.getItem("auth");

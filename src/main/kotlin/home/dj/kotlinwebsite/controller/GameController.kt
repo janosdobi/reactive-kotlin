@@ -8,7 +8,7 @@ import home.dj.kotlinwebsite.persistence.repo.GameRepository
 import home.dj.kotlinwebsite.service.GameEventManager
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.bind.annotation.RestController
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.security.Principal
 
@@ -16,7 +16,7 @@ private val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 
 @RestController
 @RequestMapping("/api")
-class RestController(
+class GameController(
     private val gameRepository: GameRepository,
     private val gameEventManager: GameEventManager
 ) {
@@ -76,5 +76,13 @@ class RestController(
                     game.players.map { PlayerDTO(it.uid, it.name) }
                 )
             }
+    }
+
+    @GetMapping("v1/players/{gameCode}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getPlayers(@PathVariable gameCode: String): Flux<PlayerDTO> {
+        return gameRepository.findGameByCode(gameCode)
+            .flatMapMany { Flux.fromIterable(it.players) }
+            .map { PlayerDTO(it.uid, it.name) }
     }
 }
