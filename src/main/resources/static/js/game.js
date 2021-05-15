@@ -2,8 +2,16 @@ $(window).on("load", function () {
     const longUrl = window.location.href
     let shortURL = longUrl.slice(0, longUrl.indexOf("?token="));
     window.history.replaceState({}, null, shortURL);
+    setupPage();
     listenToEvents();
 });
+
+function setupPage() {
+    const player = sessionStorage.getItem("player");
+    if (player != null) {
+        $('#welcome').text('Welcome ' + player + '!');
+    }
+}
 
 
 function listenToEvents() {
