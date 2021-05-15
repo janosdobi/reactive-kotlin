@@ -39,3 +39,8 @@ body {
 .game-input {
     alignment: center;
 }
+
+ul {
+    list-style: none;
+    padding-left: 0;
+}

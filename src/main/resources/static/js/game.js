@@ -12,7 +12,19 @@ function listenToEvents() {
     const eventSource = new EventSource("/game/v1/events?gameCode=" + gameCode + "&token=" + token);
 
     eventSource.onmessage = event => {
-        let data = JSON.parse(event.data);
-        console.log(data);
+        const data = JSON.parse(event.data);
+        handleEvent(data);
     };
+}
+
+function handleEvent(data) {
+    const eventType = data.eventType;
+
+    switch (eventType) {
+        case 'PLAYER_JOINED': handlePlayerJoined(data);
+    }
+
+    function handlePlayerJoined(data) {
+        $("#players").append('<li class="p text-center text-light">' + data.message + "</li>");
+    }
 }
