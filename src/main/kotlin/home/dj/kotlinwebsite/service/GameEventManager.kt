@@ -9,23 +9,19 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
 @Service
-class GameEventListener {
+class GameEventManager {
     private val gamePublisherMap: ConcurrentMap<String, ConnectableFlux<GameEventDTO>> = ConcurrentHashMap()
     private val eventConsumerMap: ConcurrentMap<String, (GameEventDTO) -> Unit> = ConcurrentHashMap()
 
-    fun onMessage(event: GameEventDTO) {
+    fun publishEvent(event: GameEventDTO) {
         eventConsumerMap[event.gameCode]?.invoke(event)
     }
 
-    fun createNewGame(gameCode: String) {
-        gamePublisherMap[gameCode] = createEventHotPublisher(gameCode)
-    }
-
-    fun getPublisherForGame(gameCode: String) = gamePublisherMap[gameCode]
-
-    private fun createEventHotPublisher(gameCode: String): ConnectableFlux<GameEventDTO> {
-        return Flux.create { sink: FluxSink<GameEventDTO> ->
+    fun createNewPublisherForGame(gameCode: String) {
+        gamePublisherMap[gameCode] = Flux.create { sink: FluxSink<GameEventDTO> ->
             eventConsumerMap[gameCode] = { sink.next(it) }
         }.publish()
     }
+
+    fun getPublisherForGame(gameCode: String) = gamePublisherMap[gameCode]
 }

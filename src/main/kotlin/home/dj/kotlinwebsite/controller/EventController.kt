@@ -2,7 +2,7 @@ package home.dj.kotlinwebsite.controller
 
 import home.dj.kotlinwebsite.model.GameEventDTO
 import home.dj.kotlinwebsite.service.CustomAuthorizer
-import home.dj.kotlinwebsite.service.GameEventListener
+import home.dj.kotlinwebsite.service.GameEventManager
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -13,7 +13,7 @@ import reactor.core.publisher.Flux
 @RestController
 class EventController(
     private val sseAuthorizer: CustomAuthorizer,
-    private val gameEventListener: GameEventListener
+    private val gameEventManager: GameEventManager
 ) {
 
     @GetMapping(value = ["game/v1/events"], produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
@@ -23,7 +23,7 @@ class EventController(
     ): Flux<GameEventDTO>? {
         return try {
             sseAuthorizer.authorize(token)
-            gameCode?.let { gameEventListener.getPublisherForGame(it)?.autoConnect() }
+            gameCode?.let { gameEventManager.getPublisherForGame(it)?.autoConnect() }
         } catch (ex: HttpClientErrorException) {
             Flux.empty()
         }

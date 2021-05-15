@@ -1,10 +1,11 @@
 package home.dj.kotlinwebsite.controller
 
 import home.dj.kotlinwebsite.model.*
+import home.dj.kotlinwebsite.model.EventType.PLAYER_JOINED
 import home.dj.kotlinwebsite.persistence.document.Game
 import home.dj.kotlinwebsite.persistence.document.Player
 import home.dj.kotlinwebsite.persistence.repo.GameRepository
-import home.dj.kotlinwebsite.service.GameEventListener
+import home.dj.kotlinwebsite.service.GameEventManager
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.bind.annotation.RestController
@@ -17,7 +18,7 @@ private val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 @RequestMapping("/api")
 class RestController(
     private val gameRepository: GameRepository,
-    private val gameEventListener: GameEventListener
+    private val gameEventManager: GameEventManager
 ) {
 
     @PostMapping("v1/new-game", consumes = ["application/json"])
@@ -41,14 +42,23 @@ class RestController(
                     game.players.map { PlayerDTO(it.uid, it.name) }
                 )
             }
-            .doOnNext { gameEventListener.createNewGame(it.code) }
+            .doOnNext { gameEventManager.createNewPublisherForGame(it.code) }
     }
 
     @PostMapping("v1/join-game", consumes = ["application/json"])
     @ResponseStatus(HttpStatus.CREATED)
     fun joinGame(principal: Principal, @RequestBody request: Mono<JoinGameRequestDTO>): Mono<GameDTO> {
         return request
-            .doOnNext { gameEventListener.onMessage(GameEventDTO("player-joined", it.playerName, it.gameId)) }
+            .doOnNext {
+                gameEventManager.publishEvent(
+                    GameEventDTO(
+                        PLAYER_JOINED,
+                        it.playerName,
+                        it.playerName,
+                        it.gameId
+                    )
+                )
+            }
             .flatMap {
                 Mono.zip(
                     Mono.just(Player(principal.name, it.playerName)),
