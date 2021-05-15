@@ -2,6 +2,7 @@ package home.dj.kotlinwebsite.controller
 
 import home.dj.kotlinwebsite.model.*
 import home.dj.kotlinwebsite.model.EventType.PLAYER_JOINED
+import home.dj.kotlinwebsite.model.EventType.PLAYER_LEFT
 import home.dj.kotlinwebsite.persistence.document.Game
 import home.dj.kotlinwebsite.persistence.document.Player
 import home.dj.kotlinwebsite.persistence.repo.GameRepository
@@ -32,14 +33,14 @@ class GameController(
                             .map { kotlin.random.Random.nextInt(0, charPool.size) }
                             .map(charPool::get)
                             .joinToString(""),
-                        listOf(Player(principal.name, it.playerName))
+                        listOf(Player(it.playerName))
                     )
                 )
             }
             .map { game ->
                 GameDTO(
                     game.code,
-                    game.players.map { PlayerDTO(it.uid, it.name) }
+                    game.players.map { PlayerDTO(it.name) }
                 )
             }
             .doOnNext { gameEventManager.createNewPublisherForGame(it.code) }
@@ -61,7 +62,7 @@ class GameController(
             }
             .flatMap {
                 Mono.zip(
-                    Mono.just(Player(principal.name, it.playerName)),
+                    Mono.just(Player(it.playerName)),
                     gameRepository.findGameByCode(it.gameId)
                 )
             }
@@ -73,7 +74,7 @@ class GameController(
             .map { game ->
                 GameDTO(
                     game.code,
-                    game.players.map { PlayerDTO(it.uid, it.name) }
+                    game.players.map { PlayerDTO(it.name) }
                 )
             }
     }
@@ -83,6 +84,17 @@ class GameController(
     fun getPlayers(@PathVariable gameCode: String): Flux<PlayerDTO> {
         return gameRepository.findGameByCode(gameCode)
             .flatMapMany { Flux.fromIterable(it.players) }
-            .map { PlayerDTO(it.uid, it.name) }
+            .map { PlayerDTO(it.name) }
+    }
+
+    @GetMapping("v1/quit")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun quitGame(@RequestBody request: Mono<QuitGameRequestDTO>) {
+        println("request received!")
+        //TODO continue from here - remove player from collection and persist
+        request
+            .doOnNext { gameEventManager.publishEvent(GameEventDTO(PLAYER_LEFT, it.playerName, it.playerName, it.gameId)) }
+            .map { gameRepository.findGameByPlayersContains(Player(it.playerName)) }
+            .block()
     }
 }

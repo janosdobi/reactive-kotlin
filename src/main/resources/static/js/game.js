@@ -2,7 +2,7 @@ $(window).on("load", function () {
     const longUrl = window.location.href
     let shortURL = longUrl.slice(0, longUrl.indexOf("?token="));
     window.history.replaceState({}, null, shortURL);
-    setupPage(shortURL);
+    setupPage();
     listenToEvents();
 });
 
@@ -14,12 +14,13 @@ function setupPage(shortUrl) {
     }
 
     //present players who already joined
-    getPlayersAlreadyJoined(sessionStorage.getItem("gameCode"), shortUrl);
+    getPlayersAlreadyJoined(sessionStorage.getItem("gameCode"));
 }
 
-function getPlayersAlreadyJoined(gameCode, url) {
+function getPlayersAlreadyJoined(gameCode) {
     const token = sessionStorage.getItem('auth');
     const actualPlayer = sessionStorage.getItem('player')
+    const url = window.location.href;
     const cleanUrl = url.slice(0, url.indexOf('/game/'));
     $.get({
         url: cleanUrl + "/api/v1/players/" + gameCode,
@@ -52,10 +53,34 @@ function handleEvent(data) {
     const eventType = data.eventType;
 
     switch (eventType) {
-        case 'PLAYER_JOINED': handlePlayerJoined(data);
+        case 'PLAYER_JOINED': handlePlayerJoined(data); break;
+        case 'PLAYER_LEFT': handlePlayerLeft(data); break;
     }
 
     function handlePlayerJoined(data) {
         $("#players").append('<li class="p text-center text-light">' + data.message + "</li>");
     }
+
+    function handlePlayerLeft(data) {
+        //TODO continue from here - remove from list
+        console.log(data);
+    }
 }
+
+$(window).on("unload", function() {
+    const url = window.location.href;
+    const cleanUrl = url.slice(0, url.indexOf('/game/'));
+    const token = sessionStorage.getItem('auth');
+    const requestBody = {
+        playerName: sessionStorage.getItem('player'),
+        gameId: sessionStorage.getItem('gameCode')
+    }
+    $.post({
+        url: cleanUrl + "/api/v1/quit/",
+        headers: {
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json"
+        },
+        data: JSON.stringify(requestBody)
+    });
+});

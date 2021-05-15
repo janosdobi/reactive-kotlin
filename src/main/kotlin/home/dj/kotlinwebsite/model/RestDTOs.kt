@@ -15,11 +15,15 @@ data class GameDTO(
 )
 
 data class PlayerDTO(
-    val uid: String,
     val name: String
 )
 
 data class NewGameRequestDTO(
+    val playerName: String
+)
+
+data class QuitGameRequestDTO(
+    val gameId: String,
     val playerName: String
 )
 
@@ -36,5 +40,6 @@ data class GameEventDTO(
 )
 
 enum class EventType {
-    PLAYER_JOINED
+    PLAYER_JOINED,
+    PLAYER_LEFT
 }

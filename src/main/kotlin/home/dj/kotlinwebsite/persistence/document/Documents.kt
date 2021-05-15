@@ -29,6 +29,5 @@ data class Game @JsonCreator constructor(
 ) : Serializable, EntityBase()
 
 data class Player @JsonCreator constructor(
-    @JsonProperty("uid") var uid: String,
     @JsonProperty("name") var name: String,
 ) : Serializable, EntityBase()
