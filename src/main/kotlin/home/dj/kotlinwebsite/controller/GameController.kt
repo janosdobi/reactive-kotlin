@@ -102,13 +102,15 @@ class GameController(
                 val player = it.t1
                 val game = it.t2
                 game.players = game.players.minusElement(player)
-                gameRepository.save(game)
-            }
-            .map { game ->
-                GameDTO(
-                    game.code,
-                    game.players.map { PlayerDTO(it.name) }
-                )
+                if (game.players.isEmpty())
+                    gameRepository.delete(game).map { GameDTO("REMOVED", emptyList()) }
+                else
+                    gameRepository.save(game).map { savedGame ->
+                        GameDTO(
+                            savedGame.code,
+                            savedGame.players.map { PlayerDTO(it.name) }
+                        )
+                    }
             }
     }
 }
