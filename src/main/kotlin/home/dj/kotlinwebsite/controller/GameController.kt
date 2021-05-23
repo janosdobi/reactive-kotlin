@@ -69,7 +69,7 @@ class GameController(
             .flatMap {
                 val game = it.t2
                 game.players = game.players.plusElement(it.t1)
-                return@flatMap gameRepository.save(game)
+                gameRepository.save(game)
             }
             .map { game ->
                 GameDTO(
@@ -87,14 +87,28 @@ class GameController(
             .map { PlayerDTO(it.name) }
     }
 
-    @GetMapping("v1/quit")
+    @PostMapping("v1/quit")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun quitGame(@RequestBody request: Mono<QuitGameRequestDTO>) {
-        println("request received!")
-        //TODO continue from here - remove player from collection and persist
-        request
-            .doOnNext { gameEventManager.publishEvent(GameEventDTO(PLAYER_LEFT, it.playerName, it.playerName, it.gameId)) }
-            .map { gameRepository.findGameByPlayersContains(Player(it.playerName)) }
-            .block()
+    fun quitGame(@RequestBody request: Mono<QuitGameRequestDTO>): Mono<GameDTO> {
+        return request
+            .doOnNext {
+                gameEventManager.publishEvent(GameEventDTO(PLAYER_LEFT, it.playerName, it.playerName, it.gameId))
+            }
+            .flatMap {
+                val player = Player(it.playerName)
+                Mono.zip(Mono.just(player), gameRepository.findGameByPlayersContaining(player.name))
+            }
+            .flatMap {
+                val player = it.t1
+                val game = it.t2
+                game.players = game.players.minusElement(player)
+                gameRepository.save(game)
+            }
+            .map { game ->
+                GameDTO(
+                    game.code,
+                    game.players.map { PlayerDTO(it.name) }
+                )
+            }
     }
 }

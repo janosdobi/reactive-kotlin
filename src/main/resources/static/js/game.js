@@ -10,7 +10,7 @@ function setupPage(shortUrl) {
     //set player name in welcome tag
     const player = sessionStorage.getItem("player");
     if (player != null) {
-        $('#welcome').text('Welcome ' + player + '!');
+        $('#welcome').text(`Welcome ${player}!`);
     }
 
     //present players who already joined
@@ -32,7 +32,7 @@ function getPlayersAlreadyJoined(gameCode) {
             if (response != null && response.length > 0) {
                 response
                     .filter(player => actualPlayer !== player.name)
-                    .forEach(player => $("#players").append('<li class="p text-center text-light">' + player.name + "</li>"));
+                    .forEach(player => $("#players").append(`<li class="p text-center text-light">${player.name}</li>`));
             }
         }
     });
@@ -58,16 +58,19 @@ function handleEvent(data) {
     }
 
     function handlePlayerJoined(data) {
-        $("#players").append('<li class="p text-center text-light">' + data.message + "</li>");
+        $("#players").append(`<li class="p text-center text-light" id="${data.message}">${data.message}</li>`);
     }
 
     function handlePlayerLeft(data) {
-        //TODO continue from here - remove from list
-        console.log(data);
+        $(`#${data.message}`).remove();
     }
 }
 
-$(window).on("unload", function() {
+function startGame() {
+    alert("Not there yet!");
+}
+
+function quitGame() {
     const url = window.location.href;
     const cleanUrl = url.slice(0, url.indexOf('/game/'));
     const token = sessionStorage.getItem('auth');
@@ -83,4 +86,4 @@ $(window).on("unload", function() {
         },
         data: JSON.stringify(requestBody)
     });
-});
+}
