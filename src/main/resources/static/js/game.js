@@ -51,6 +51,7 @@ function listenToEvents() {
 
 function handleEvent(data) {
     const eventType = data.eventType;
+    console.log("Event received: " + eventType)
 
     switch (eventType) {
         case 'PLAYER_JOINED': handlePlayerJoined(data); break;
@@ -58,11 +59,13 @@ function handleEvent(data) {
     }
 
     function handlePlayerJoined(data) {
-        $("#players").append(`<li class="p text-center text-light" id="${data.message}">${data.message}</li>`);
+        const sanitizedName = data.message.replace(" ", "_")
+        $("#players").append(`<li class="p text-center text-light" id="${sanitizedName}">${data.message}</li>`);
     }
 
     function handlePlayerLeft(data) {
-        $(`#${data.message}`).remove();
+        const sanitizedName = data.message.replace(" ", "_")
+        $(`#${sanitizedName}`).remove();
     }
 }
 
@@ -84,6 +87,9 @@ function quitGame() {
             "Authorization": "Bearer " + token,
             "Content-Type": "application/json"
         },
-        data: JSON.stringify(requestBody)
+        data: JSON.stringify(requestBody),
+        success: function () {
+            window.close();
+        }
     });
 }

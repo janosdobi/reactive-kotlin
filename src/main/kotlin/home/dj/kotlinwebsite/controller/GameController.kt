@@ -96,7 +96,7 @@ class GameController(
             }
             .flatMap {
                 val player = Player(it.playerName)
-                Mono.zip(Mono.just(player), gameRepository.findGameByPlayersContaining(player.name))
+                Mono.zip(Mono.just(player), gameRepository.findGameByCode(it.gameId))
             }
             .flatMap {
                 val player = it.t1
