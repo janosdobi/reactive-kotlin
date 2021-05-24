@@ -50,6 +50,7 @@ class GameService(
                 Mono.zip(
                     Mono.just(Player(it.playerName)),
                     gameRepository.findGameByCode(it.gameCode)
+                        .switchIfEmpty(Mono.error(IllegalArgumentException("Game does not exist!")))
                 )
             }
             .flatMap { playerGameTuple ->

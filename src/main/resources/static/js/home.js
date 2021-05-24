@@ -56,5 +56,9 @@ function joinGame() {
                 $('#errorMessage').html(`<p class="text-center text-light">${response.message}</p>`);
             }
         }
+    }).fail(function(response) {
+        console.log(response)
+        //TODO finetune exception handling
+        alert(`Something is wrong, most probably the game code you have provided. Try again`)
     });
 }
