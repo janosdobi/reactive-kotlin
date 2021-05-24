@@ -26,7 +26,14 @@ abstract class EntityBase {
 data class Game @JsonCreator constructor(
     @JsonProperty("code") var code: String,
     @JsonProperty("players") var players: Collection<Player>,
+    @JsonProperty("status") var status: GameStatus
 ) : Serializable, EntityBase()
+
+enum class GameStatus {
+    READY,
+    STARTED,
+    FINISHED
+}
 
 data class Player @JsonCreator constructor(
     @JsonProperty("name") var name: String,

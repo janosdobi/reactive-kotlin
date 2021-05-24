@@ -4,113 +4,58 @@ import home.dj.kotlinwebsite.model.*
 import home.dj.kotlinwebsite.model.EventType.PLAYER_JOINED
 import home.dj.kotlinwebsite.model.EventType.PLAYER_LEFT
 import home.dj.kotlinwebsite.persistence.document.Game
+import home.dj.kotlinwebsite.persistence.document.GameStatus
+import home.dj.kotlinwebsite.persistence.document.GameStatus.FINISHED
+import home.dj.kotlinwebsite.persistence.document.GameStatus.READY
 import home.dj.kotlinwebsite.persistence.document.Player
-import home.dj.kotlinwebsite.persistence.repo.GameRepository
+import home.dj.kotlinwebsite.repository.GameRepository
 import home.dj.kotlinwebsite.service.GameEventManager
+import home.dj.kotlinwebsite.service.GameService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.security.Principal
 
-private val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
-
 @RestController
 @RequestMapping("/api")
 class GameController(
-    private val gameRepository: GameRepository,
-    private val gameEventManager: GameEventManager
+    private val gameService: GameService
 ) {
 
     @PostMapping("v1/new-game", consumes = ["application/json"])
     @ResponseStatus(HttpStatus.CREATED)
     fun newGame(principal: Principal, @RequestBody request: Mono<NewGameRequestDTO>): Mono<GameDTO> {
-        return request
-            .flatMap {
-                gameRepository.save(
-                    Game(
-                        (1..6)
-                            .map { kotlin.random.Random.nextInt(0, charPool.size) }
-                            .map(charPool::get)
-                            .joinToString(""),
-                        listOf(Player(it.playerName))
-                    )
-                )
-            }
-            .map { game ->
-                GameDTO(
-                    game.code,
-                    game.players.map { PlayerDTO(it.name) }
-                )
-            }
-            .doOnNext { gameEventManager.createNewPublisherForGame(it.code) }
+        return gameService.createNewGame(request)
     }
 
     @PostMapping("v1/join-game", consumes = ["application/json"])
     @ResponseStatus(HttpStatus.CREATED)
     fun joinGame(principal: Principal, @RequestBody request: Mono<JoinGameRequestDTO>): Mono<GameDTO> {
-        return request
-            .doOnNext {
-                gameEventManager.publishEvent(
-                    GameEventDTO(
-                        PLAYER_JOINED,
-                        it.playerName,
-                        it.playerName,
-                        it.gameId
-                    )
-                )
-            }
-            .flatMap {
-                Mono.zip(
-                    Mono.just(Player(it.playerName)),
-                    gameRepository.findGameByCode(it.gameId)
-                )
-            }
-            .flatMap {
-                val game = it.t2
-                game.players = game.players.plusElement(it.t1)
-                gameRepository.save(game)
-            }
-            .map { game ->
-                GameDTO(
-                    game.code,
-                    game.players.map { PlayerDTO(it.name) }
-                )
-            }
+        return gameService.joinGame(request)
     }
 
     @GetMapping("v1/players/{gameCode}")
     @ResponseStatus(HttpStatus.OK)
     fun getPlayers(@PathVariable gameCode: String): Flux<PlayerDTO> {
-        return gameRepository.findGameByCode(gameCode)
-            .flatMapMany { Flux.fromIterable(it.players) }
-            .map { PlayerDTO(it.name) }
+        return gameService.getPlayersForGame(gameCode)
     }
 
     @PostMapping("v1/quit")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun quitGame(@RequestBody request: Mono<QuitGameRequestDTO>): Mono<GameDTO> {
-        return request
-            .doOnNext {
-                gameEventManager.publishEvent(GameEventDTO(PLAYER_LEFT, it.playerName, it.playerName, it.gameId))
-            }
-            .flatMap {
-                val player = Player(it.playerName)
-                Mono.zip(Mono.just(player), gameRepository.findGameByCode(it.gameId))
-            }
-            .flatMap {
-                val player = it.t1
-                val game = it.t2
-                game.players = game.players.minusElement(player)
-                if (game.players.isEmpty())
-                    gameRepository.delete(game).map { GameDTO("REMOVED", emptyList()) }
-                else
-                    gameRepository.save(game).map { savedGame ->
-                        GameDTO(
-                            savedGame.code,
-                            savedGame.players.map { PlayerDTO(it.name) }
-                        )
-                    }
-            }
+        return gameService.quitGame(request)
+    }
+
+    @PostMapping("v1/start")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun startGame(@RequestBody request: Mono<StartGameRequestDTO>): Mono<GameDTO> {
+        return gameService.startGame(request)
+    }
+
+    @PostMapping("v1/finish")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun finishGame(@RequestBody request: Mono<FinishGameRequestDTO>): Mono<GameDTO> {
+        return gameService.finishGame(request)
     }
 }

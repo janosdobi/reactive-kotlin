@@ -1,7 +1,6 @@
 $(window).on("load", function () {
     const longUrl = window.location.href
     const shortURL = longUrl.slice(0, longUrl.indexOf("?token="));
-    console.log(shortURL)
     window.history.replaceState({}, null, shortURL);
 });
 
@@ -20,7 +19,7 @@ function newPlayer() {
         "                                </button>\n" +
         "                            </div>\n" +
         "                            <div class=\"form-group\">\n" +
-        "                                <input type=\"text\" class=\"form-control\" placeholder=\"enter game id\" id=\"gameId\"/>\n" +
+        "                                <input type=\"text\" class=\"form-control\" placeholder=\"put the code here\" id=\"gameCode\"/>\n" +
         "                            </div>\n" +
         "                    </div>\n" +
         "                </div>")
@@ -49,9 +48,9 @@ function newGame() {
 function joinGame() {
     const token = sessionStorage.getItem('auth');
     const playerName = sessionStorage.getItem('player');
-    const gameId = $("#gameId").val()
+    const gameCode = $("#gameCode").val()
     const requestBody = {
-        gameId: gameId,
+        gameCode: gameCode,
         playerName: playerName
     }
     $.post({
@@ -92,7 +91,7 @@ $("#joinGameForm").submit(function (event) {
         }
     }).done(function (response) {
         submitButton.prop('disabled', false);
-        window.location.replace("/game/" + response.gameId);
+        window.location.replace("/game/" + response.gameCode);
     });
 });
 

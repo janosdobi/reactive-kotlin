@@ -1,4 +1,4 @@
-package home.dj.kotlinwebsite.persistence.repo
+package home.dj.kotlinwebsite.repository
 
 import home.dj.kotlinwebsite.persistence.document.Game
 import home.dj.kotlinwebsite.persistence.document.Player

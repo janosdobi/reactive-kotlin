@@ -6,7 +6,7 @@ $(window).on("load", function () {
     listenToEvents();
 });
 
-function setupPage(shortUrl) {
+function setupPage() {
     //set player name in welcome tag
     const player = sessionStorage.getItem("player");
     if (player != null) {
@@ -56,6 +56,7 @@ function handleEvent(data) {
     switch (eventType) {
         case 'PLAYER_JOINED': handlePlayerJoined(data); break;
         case 'PLAYER_LEFT': handlePlayerLeft(data); break;
+        case 'GAME_STARTED': handleGameStarted(data); break;
     }
 
     function handlePlayerJoined(data) {
@@ -67,10 +68,44 @@ function handleEvent(data) {
         const sanitizedName = data.message.replace(" ", "_")
         $(`#${sanitizedName}`).remove();
     }
+
+    function handleGameStarted(data) {
+        $("#game").html(`<p class="p text-center text-light">The game has started!</p>`)
+    }
 }
 
 function startGame() {
-    alert("Not there yet!");
+    const url = window.location.href;
+    const cleanUrl = url.slice(0, url.indexOf('/game/'));
+    const token = sessionStorage.getItem('auth');
+    const requestBody = {
+        gameCode: sessionStorage.getItem('gameCode')
+    }
+    $.post({
+        url: cleanUrl + "/api/v1/start/",
+        headers: {
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json"
+        },
+        data: JSON.stringify(requestBody)
+    });
+}
+
+function finishGame() {
+    const url = window.location.href;
+    const cleanUrl = url.slice(0, url.indexOf('/game/'));
+    const token = sessionStorage.getItem('auth');
+    const requestBody = {
+        gameCode: sessionStorage.getItem('gameCode')
+    }
+    $.post({
+        url: cleanUrl + "/api/v1/finish/",
+        headers: {
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json"
+        },
+        data: JSON.stringify(requestBody)
+    });
 }
 
 function quitGame() {
@@ -79,7 +114,7 @@ function quitGame() {
     const token = sessionStorage.getItem('auth');
     const requestBody = {
         playerName: sessionStorage.getItem('player'),
-        gameId: sessionStorage.getItem('gameCode')
+        gameCode: sessionStorage.getItem('gameCode')
     }
     $.post({
         url: cleanUrl + "/api/v1/quit/",
