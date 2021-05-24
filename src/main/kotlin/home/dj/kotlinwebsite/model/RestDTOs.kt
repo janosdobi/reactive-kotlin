@@ -43,6 +43,12 @@ data class JoinGameRequestDTO(
     val playerName: String
 )
 
+data class JoinGameResponseDTO(
+    val success: Boolean,
+    val message: String,
+    val gameCode: String
+)
+
 data class GameEventDTO(
     val eventType: EventType,
     val message: String,

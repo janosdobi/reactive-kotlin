@@ -5,8 +5,7 @@ import home.dj.kotlinwebsite.model.EventType.GAME_FINISHED
 import home.dj.kotlinwebsite.model.EventType.GAME_STARTED
 import home.dj.kotlinwebsite.persistence.document.Game
 import home.dj.kotlinwebsite.persistence.document.GameStatus
-import home.dj.kotlinwebsite.persistence.document.GameStatus.FINISHED
-import home.dj.kotlinwebsite.persistence.document.GameStatus.STARTED
+import home.dj.kotlinwebsite.persistence.document.GameStatus.*
 import home.dj.kotlinwebsite.persistence.document.Player
 import home.dj.kotlinwebsite.repository.GameRepository
 import org.springframework.stereotype.Service
@@ -45,35 +44,35 @@ class GameService(
             .doOnNext { gameEventManager.createNewPublisherForGame(it.code) }
     }
 
-    fun joinGame(request: Mono<JoinGameRequestDTO>): Mono<GameDTO> {
+    fun joinGame(request: Mono<JoinGameRequestDTO>): Mono<JoinGameResponseDTO> {
         return request
-            .doOnNext {
-                gameEventManager.publishEvent(
-                    GameEventDTO(
-                        EventType.PLAYER_JOINED,
-                        it.playerName,
-                        it.playerName,
-                        it.gameCode
-                    )
-                )
-            }
             .flatMap {
                 Mono.zip(
                     Mono.just(Player(it.playerName)),
                     gameRepository.findGameByCode(it.gameCode)
                 )
             }
-            .flatMap {
-                val game = it.t2
-                game.players = game.players.plusElement(it.t1)
-                gameRepository.save(game)
-            }
-            .map { game ->
-                GameDTO(
-                    game.code,
-                    game.players.map { PlayerDTO(it.name) },
-                    game.status
-                )
+            .flatMap { playerGameTuple ->
+                val game = playerGameTuple.t2
+                val player = playerGameTuple.t1
+                if (game.status == READY) {
+                    game.players = game.players.plusElement(player)
+                    Mono.zip(
+                        Mono.just(player),
+                        gameRepository.save(game)
+                    ).doOnNext {
+                        gameEventManager.publishEvent(
+                            GameEventDTO(
+                                EventType.PLAYER_JOINED,
+                                it.t1.name,
+                                it.t1.name,
+                                it.t2.code
+                            )
+                        )
+                    }.map { JoinGameResponseDTO(true, "", it.t2.code) }
+                } else {
+                    Mono.just(JoinGameResponseDTO(false, "Cannot join a game which has already started!", ""))
+                }
             }
     }
 

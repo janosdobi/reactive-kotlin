@@ -31,7 +31,7 @@ class GameController(
 
     @PostMapping("v1/join-game", consumes = ["application/json"])
     @ResponseStatus(HttpStatus.CREATED)
-    fun joinGame(principal: Principal, @RequestBody request: Mono<JoinGameRequestDTO>): Mono<GameDTO> {
+    fun joinGame(principal: Principal, @RequestBody request: Mono<JoinGameRequestDTO>): Mono<JoinGameResponseDTO> {
         return gameService.joinGame(request)
     }
 
