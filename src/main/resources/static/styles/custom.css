@@ -48,3 +48,17 @@ ul {
 #leave {
     float: right;
 }
+
+#gameCode {
+    width: 50%;
+    display: inline;
+    margin: 4%;
+}
+
+#joinGameBtn {
+    display: inline !important;
+}
+
+#startGame {
+    margin-bottom: 1% !important;
+}

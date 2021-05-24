@@ -32,7 +32,9 @@ function getPlayersAlreadyJoined(gameCode) {
             if (response != null && response.length > 0) {
                 response
                     .filter(player => actualPlayer !== player.name)
-                    .forEach(player => $("#players").append(`<li class="p text-center text-light">${player.name}</li>`));
+                    .forEach(player => $("#players").append(
+                        `<li class="p text-center text-light" id="${player.name.replace(" ", "_")}">${player.name}</li>`
+                    ));
             }
         }
     });
@@ -54,9 +56,15 @@ function handleEvent(data) {
     console.log("Event received: " + eventType)
 
     switch (eventType) {
-        case 'PLAYER_JOINED': handlePlayerJoined(data); break;
-        case 'PLAYER_LEFT': handlePlayerLeft(data); break;
-        case 'GAME_STARTED': handleGameStarted(data); break;
+        case 'PLAYER_JOINED':
+            handlePlayerJoined(data);
+            break;
+        case 'PLAYER_LEFT':
+            handlePlayerLeft(data);
+            break;
+        case 'GAME_STARTED':
+            handleGameStarted(data);
+            break;
     }
 
     function handlePlayerJoined(data) {
@@ -78,8 +86,14 @@ function startGame() {
     const url = window.location.href;
     const cleanUrl = url.slice(0, url.indexOf('/game/'));
     const token = sessionStorage.getItem('auth');
+    const numberOfRounds = $("#noRounds").val()
+    const lengthOfRounds = $("#lengthRounds").val()
+    const playerName = sessionStorage.getItem('player')
     const requestBody = {
-        gameCode: sessionStorage.getItem('gameCode')
+        gameCode: sessionStorage.getItem('gameCode'),
+        numberOfRounds: numberOfRounds,
+        lengthOfRounds: lengthOfRounds,
+        playerName: playerName
     }
     $.post({
         url: cleanUrl + "/api/v1/start/",

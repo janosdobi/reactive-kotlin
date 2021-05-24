@@ -7,9 +7,13 @@ $(window).on("load", function () {
 function newPlayer() {
     sessionStorage.setItem('player', $("#playerName").val());
     $("#home").html(`<div class="form-group text-center">
-                               <button type="submit" class="btn btn-light btn-login" onclick="newGame()">start new game</button>
-                               <button type="submit" class="btn btn-light btn-login" onclick="joinGame()">join existing game with code:</button>
-                               <input type="text" class="form-control" placeholder="put the code here" id="gameCode"/>
+                               <div class="form-group text-center">
+                                    <button type="submit" class="btn btn-light btn-login" onclick="newGame()">start new game</button>
+                               </div>
+                               <div class="form-group text-center">
+                                   <button type="submit" class="btn btn-light btn-login" id="joinGameBtn" onclick="joinGame()">join existing game with code:</button>
+                                   <input type="text" class="form-control" placeholder="code here" id="gameCode"/>
+                               </div>
                            </div>`)
 }
 

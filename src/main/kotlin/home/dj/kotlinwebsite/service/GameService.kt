@@ -4,7 +4,6 @@ import home.dj.kotlinwebsite.model.*
 import home.dj.kotlinwebsite.model.EventType.GAME_FINISHED
 import home.dj.kotlinwebsite.model.EventType.GAME_STARTED
 import home.dj.kotlinwebsite.persistence.document.Game
-import home.dj.kotlinwebsite.persistence.document.GameStatus
 import home.dj.kotlinwebsite.persistence.document.GameStatus.*
 import home.dj.kotlinwebsite.persistence.document.Player
 import home.dj.kotlinwebsite.repository.GameRepository
@@ -30,7 +29,9 @@ class GameService(
                             .map(charPool::get)
                             .joinToString(""),
                         listOf(Player(it.playerName)),
-                        GameStatus.READY
+                        READY,
+                        0,
+                        0
                     )
                 )
             }
@@ -38,7 +39,9 @@ class GameService(
                 GameDTO(
                     game.code,
                     game.players.map { PlayerDTO(it.name) },
-                    game.status
+                    game.status,
+                    game.numberOfRounds,
+                    game.lengthOfRounds
                 )
             }
             .doOnNext { gameEventManager.createNewPublisherForGame(it.code) }
@@ -104,13 +107,15 @@ class GameService(
                 val game = playerGameTuple.t2
                 game.players = game.players.minusElement(player)
                 if (game.players.isEmpty())
-                    gameRepository.delete(game).map { GameDTO("REMOVED", emptyList(), GameStatus.FINISHED) }
+                    gameRepository.delete(game).map { GameDTO("REMOVED", emptyList(), FINISHED, 0, 0) }
                 else
                     gameRepository.save(game).map { savedGame ->
                         GameDTO(
                             savedGame.code,
                             savedGame.players.map { PlayerDTO(it.name) },
-                            savedGame.status
+                            savedGame.status,
+                            savedGame.numberOfRounds,
+                            savedGame.lengthOfRounds
                         )
                     }
             }
@@ -119,20 +124,36 @@ class GameService(
     fun startGame(request: Mono<StartGameRequestDTO>): Mono<GameDTO> {
         return request
             .doOnNext {
-                gameEventManager.publishEvent(GameEventDTO(GAME_STARTED, "", "", it.gameCode))
+                gameEventManager.publishEvent(
+                    GameEventDTO(
+                        GAME_STARTED,
+                        "rounds: ${it.numberOfRounds}, length: ${it.lengthOfRounds}",
+                        it.playerName,
+                        it.gameCode
+                    )
+                )
             }
             .flatMap {
-                gameRepository.findGameByCode(it.gameCode)
+                Mono.zip(
+                    gameRepository.findGameByCode(it.gameCode),
+                    Mono.just(it)
+                )
             }
-            .flatMap { game ->
+            .flatMap { gameRequestTuple ->
+                val game = gameRequestTuple.t1
+                val requestDTO = gameRequestTuple.t2
                 game.status = STARTED
+                game.numberOfRounds = requestDTO.numberOfRounds
+                game.lengthOfRounds = requestDTO.lengthOfRounds
                 gameRepository.save(game)
             }
             .map { savedGame ->
                 GameDTO(
                     savedGame.code,
                     savedGame.players.map { PlayerDTO(it.name) },
-                    savedGame.status
+                    savedGame.status,
+                    savedGame.numberOfRounds,
+                    savedGame.lengthOfRounds
                 )
             }
     }
@@ -153,7 +174,9 @@ class GameService(
                 GameDTO(
                     savedGame.code,
                     savedGame.players.map { PlayerDTO(it.name) },
-                    savedGame.status
+                    savedGame.status,
+                    savedGame.numberOfRounds,
+                    savedGame.lengthOfRounds
                 )
             }
     }

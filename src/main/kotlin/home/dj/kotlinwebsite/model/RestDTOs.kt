@@ -14,7 +14,9 @@ data class AuthResponse(
 data class GameDTO(
     val code: String,
     val players: Collection<PlayerDTO>,
-    val status: GameStatus
+    val status: GameStatus,
+    val numberOfRounds: Int,
+    val lengthOfRounds: Int
 )
 
 data class PlayerDTO(
@@ -31,7 +33,10 @@ data class QuitGameRequestDTO(
 )
 
 data class StartGameRequestDTO(
-    val gameCode: String
+    val gameCode: String,
+    val numberOfRounds: Int,
+    val lengthOfRounds: Int,
+    val playerName: String
 )
 
 data class FinishGameRequestDTO(
