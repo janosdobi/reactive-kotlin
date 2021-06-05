@@ -68,6 +68,9 @@ function handleEvent(data) {
         case 'RoundStartedEvent':
             handleRoundStarted(data);
             break;
+        case 'RoundFinishedEvent':
+            handleRoundFinished(data);
+            break;
     }
 
     function handlePlayerJoined(data) {
@@ -99,19 +102,25 @@ function handleEvent(data) {
 
     function handleRoundStarted(data) {
         $("#game").append(
-            `<p class="h2 text-center text-light" id="round">Round ${data.roundNumber}</p>
-             <p class="d-inline p text-center text-light float-right">Time left: <span id="timer">${data.roundLength}</span></p>`
+            `<div id="round">
+                <p class="h2 text-center text-light">Round ${data.roundNumber}</p>
+                <p class="d-inline p text-center text-light float-right">Time left: <span id="timer">${data.roundLength}</span></p>
+            </div>`
         )
         const timerElement = $("#timer");
         let timeLeft = data.roundLength
-        let timer = setInterval(function() {
+        let timer = setInterval(function () {
             if (timeLeft <= 0) {
                 clearInterval(timer);
             }
-            timerElement.text(timeLeft);
             timeLeft -= 1;
+            timerElement.text(timeLeft);
         }, 1000);
 
+    }
+
+    function handleRoundFinished(data) {
+        $('#round').html(`<p class="h2 text-center text-light">Round ${data.roundNumber} finished!</p>`)
     }
 }
 

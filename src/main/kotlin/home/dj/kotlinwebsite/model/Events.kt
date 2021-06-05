@@ -35,3 +35,9 @@ data class RoundStartedEvent(
     override val gameCode: String,
     override val eventType: String = RoundStartedEvent::class.simpleName!!
 ) : GameEvent
+
+data class RoundFinishedEvent(
+    val roundNumber: Int,
+    override val gameCode: String,
+    override val eventType: String = RoundFinishedEvent::class.simpleName!!
+) : GameEvent

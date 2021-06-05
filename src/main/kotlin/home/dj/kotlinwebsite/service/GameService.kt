@@ -159,6 +159,17 @@ class GameService(
                     )
                 )
             }
+            .delayUntil {
+                Mono.delay(Duration.ofSeconds(it.lengthOfRounds.toLong()))
+            }
+            .doOnSuccess {
+                gameEventManager.publishEvent(
+                    RoundFinishedEvent(
+                        1,
+                        it.code
+                    )
+                )
+            }
     }
 
     fun finishGame(request: Mono<FinishGameRequestDTO>): Mono<GameDTO> {
