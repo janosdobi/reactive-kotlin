@@ -65,6 +65,9 @@ function handleEvent(data) {
         case 'GameStartedEvent':
             handleGameStarted(data);
             break;
+        case 'RoundStartedEvent':
+            handleRoundStarted(data);
+            break;
     }
 
     function handlePlayerJoined(data) {
@@ -92,6 +95,23 @@ function handleEvent(data) {
                     </tr>
                     ${generatePlayerScoreTable(data)}
                 </table>`)
+    }
+
+    function handleRoundStarted(data) {
+        $("#game").append(
+            `<p class="h2 text-center text-light" id="round">Round ${data.roundNumber}</p>
+             <p class="d-inline p text-center text-light float-right">Time left: <span id="timer">${data.roundLength}</span></p>`
+        )
+        const timerElement = $("#timer");
+        let timeLeft = data.roundLength
+        let timer = setInterval(function() {
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+            }
+            timerElement.text(timeLeft);
+            timeLeft -= 1;
+        }, 1000);
+
     }
 }
 

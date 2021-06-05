@@ -8,6 +8,7 @@ import home.dj.kotlinwebsite.repository.GameRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.time.Duration
 import kotlin.random.Random
 
 private val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
@@ -144,6 +145,16 @@ class GameService(
                 gameEventManager.publishEvent(
                     GameStartedEvent(
                         it,
+                        it.code
+                    )
+                )
+            }
+            .delayElement(Duration.ofMillis(2000))
+            .doOnSuccess {
+                gameEventManager.publishEvent(
+                    RoundStartedEvent(
+                        1,
+                        it.lengthOfRounds,
                         it.code
                     )
                 )
