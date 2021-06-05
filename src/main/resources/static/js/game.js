@@ -108,14 +108,18 @@ function startGame() {
         lengthOfRounds: lengthOfRounds,
         playerName: playerName
     }
-    $.post({
-        url: cleanUrl + "/api/v1/start/",
-        headers: {
-            "Authorization": "Bearer " + token,
-            "Content-Type": "application/json"
-        },
-        data: JSON.stringify(requestBody)
-    });
+    if (numberOfRounds >= 3 && lengthOfRounds >= 60) {
+        $.post({
+            url: cleanUrl + "/api/v1/start/",
+            headers: {
+                "Authorization": "Bearer " + token,
+                "Content-Type": "application/json"
+            },
+            data: JSON.stringify(requestBody)
+        });
+    } else {
+        alert("Please select number & length of rounds!")
+    }
 }
 
 function finishGame() {
