@@ -1,15 +1,6 @@
 package home.dj.kotlinwebsite.controller
 
 import home.dj.kotlinwebsite.model.*
-import home.dj.kotlinwebsite.model.EventType.PLAYER_JOINED
-import home.dj.kotlinwebsite.model.EventType.PLAYER_LEFT
-import home.dj.kotlinwebsite.persistence.document.Game
-import home.dj.kotlinwebsite.persistence.document.GameStatus
-import home.dj.kotlinwebsite.persistence.document.GameStatus.FINISHED
-import home.dj.kotlinwebsite.persistence.document.GameStatus.READY
-import home.dj.kotlinwebsite.persistence.document.Player
-import home.dj.kotlinwebsite.repository.GameRepository
-import home.dj.kotlinwebsite.service.GameEventManager
 import home.dj.kotlinwebsite.service.GameService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*

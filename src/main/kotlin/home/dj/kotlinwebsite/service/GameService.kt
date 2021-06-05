@@ -1,8 +1,6 @@
 package home.dj.kotlinwebsite.service
 
 import home.dj.kotlinwebsite.model.*
-import home.dj.kotlinwebsite.model.EventType.GAME_FINISHED
-import home.dj.kotlinwebsite.model.EventType.GAME_STARTED
 import home.dj.kotlinwebsite.persistence.document.Game
 import home.dj.kotlinwebsite.persistence.document.GameStatus.*
 import home.dj.kotlinwebsite.persistence.document.Player
@@ -66,10 +64,8 @@ class GameService(
                         gameRepository.save(game)
                     ).doOnNext {
                         gameEventManager.publishEvent(
-                            GameEventDTO(
-                                EventType.PLAYER_JOINED,
-                                it.t1.name,
-                                it.t1.name,
+                            PlayerJoinedEvent(
+                                PlayerDTO(it.t1.name),
                                 it.t2.code
                             )
                         )
@@ -90,10 +86,8 @@ class GameService(
         return request
             .doOnNext {
                 gameEventManager.publishEvent(
-                    GameEventDTO(
-                        EventType.PLAYER_LEFT,
-                        it.playerName,
-                        it.playerName,
+                    PlayerLeftEvent(
+                        PlayerDTO(it.playerName),
                         it.gameCode
                     )
                 )
@@ -123,16 +117,6 @@ class GameService(
 
     fun startGame(request: Mono<StartGameRequestDTO>): Mono<GameDTO> {
         return request
-            .doOnNext {
-                gameEventManager.publishEvent(
-                    GameEventDTO(
-                        GAME_STARTED,
-                        "rounds: ${it.numberOfRounds}, length: ${it.lengthOfRounds}",
-                        it.playerName,
-                        it.gameCode
-                    )
-                )
-            }
             .flatMap {
                 Mono.zip(
                     gameRepository.findGameByCode(it.gameCode),
@@ -156,13 +140,18 @@ class GameService(
                     savedGame.lengthOfRounds
                 )
             }
+            .doOnNext {
+                gameEventManager.publishEvent(
+                    GameStartedEvent(
+                        it,
+                        it.code
+                    )
+                )
+            }
     }
 
     fun finishGame(request: Mono<FinishGameRequestDTO>): Mono<GameDTO> {
         return request
-            .doOnNext {
-                gameEventManager.publishEvent(GameEventDTO(GAME_FINISHED, "", "", it.gameCode))
-            }
             .flatMap {
                 gameRepository.findGameByCode(it.gameCode)
             }
@@ -178,6 +167,9 @@ class GameService(
                     savedGame.numberOfRounds,
                     savedGame.lengthOfRounds
                 )
+            }
+            .doOnNext {
+                gameEventManager.publishEvent(GameFinishedEvent(it, it.code))
             }
     }
 }

@@ -32,7 +32,7 @@ function getPlayersAlreadyJoined(gameCode) {
             if (response != null && response.length > 0) {
                 response
                     .filter(player => actualPlayer !== player.name)
-                    .forEach(player => $("#players").append(
+                    .forEach(player => $("#playersBeforeStart").append(
                         `<li class="p text-center text-light" id="${player.name.replace(" ", "_")}">${player.name}</li>`
                     ));
             }
@@ -56,29 +56,34 @@ function handleEvent(data) {
     console.log("Event received: " + eventType)
 
     switch (eventType) {
-        case 'PLAYER_JOINED':
+        case 'PlayerJoinedEvent':
             handlePlayerJoined(data);
             break;
-        case 'PLAYER_LEFT':
+        case 'PlayerLeftEvent':
             handlePlayerLeft(data);
             break;
-        case 'GAME_STARTED':
+        case 'GameStartedEvent':
             handleGameStarted(data);
             break;
     }
 
     function handlePlayerJoined(data) {
-        const sanitizedName = data.message.replace(" ", "_")
-        $("#players").append(`<li class="p text-center text-light" id="${sanitizedName}">${data.message}</li>`);
+        const sanitizedName = data.player.name.replace(" ", "_")
+        $("#playersBeforeStart").append(`<li class="p text-center text-light" id="${sanitizedName}">${data.player.name}</li>`);
     }
 
     function handlePlayerLeft(data) {
-        const sanitizedName = data.message.replace(" ", "_")
+        const sanitizedName = data.player.name.replace(" ", "_")
         $(`#${sanitizedName}`).remove();
     }
 
     function handleGameStarted(data) {
-        $("#game").html(`<p class="p text-center text-light">The game has started!</p>`)
+        $("#game").html(`<table id="playerScoreTable" class="text-light">
+                    <tr>
+                        <th>Player</th>
+                        <th>Score</th>
+                    </tr>
+                </table>`)
     }
 }
 

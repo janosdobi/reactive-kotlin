@@ -1,6 +1,6 @@
 package home.dj.kotlinwebsite.controller
 
-import home.dj.kotlinwebsite.model.GameEventDTO
+import home.dj.kotlinwebsite.model.GameEvent
 import home.dj.kotlinwebsite.service.CustomAuthorizer
 import home.dj.kotlinwebsite.service.GameEventManager
 import org.springframework.http.MediaType
@@ -20,7 +20,7 @@ class EventController(
     fun gameEventStream(
         @RequestParam(required = false) token: String?,
         @RequestParam gameCode: String?
-    ): Flux<GameEventDTO>? {
+    ): Flux<GameEvent>? {
         return try {
             sseAuthorizer.authorize(token)
             gameCode?.let { gameEventManager.getPublisherForGame(it)?.autoConnect() }

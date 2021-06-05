@@ -53,17 +53,3 @@ data class JoinGameResponseDTO(
     val message: String,
     val gameCode: String
 )
-
-data class GameEventDTO(
-    val eventType: EventType,
-    val message: String,
-    val playerName: String,
-    val gameCode: String,
-)
-
-enum class EventType {
-    PLAYER_JOINED,
-    PLAYER_LEFT,
-    GAME_STARTED,
-    GAME_FINISHED
-}
