@@ -20,7 +20,8 @@ data class GameDTO(
 )
 
 data class PlayerDTO(
-    val name: String
+    val name: String,
+    val score: Int = 0
 )
 
 data class NewGameRequestDTO(

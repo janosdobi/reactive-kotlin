@@ -77,12 +77,20 @@ function handleEvent(data) {
         $(`#${sanitizedName}`).remove();
     }
 
+    function generatePlayerScoreTable(data) {
+        return data.game.players.map(player => `<tr>
+                                                    <td>${player.name}<td>
+                                                    <td>${player.score}</td>
+                                                </tr>`);
+    }
+
     function handleGameStarted(data) {
         $("#game").html(`<table id="playerScoreTable" class="text-light">
                     <tr>
                         <th>Player</th>
                         <th>Score</th>
                     </tr>
+                    ${generatePlayerScoreTable(data)}
                 </table>`)
     }
 }

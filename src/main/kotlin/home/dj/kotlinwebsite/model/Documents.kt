@@ -39,4 +39,5 @@ enum class GameStatus {
 
 data class Player @JsonCreator constructor(
     @JsonProperty("name") var name: String,
+    @JsonProperty("score") var score: Int = 0
 ) : Serializable, EntityBase()
