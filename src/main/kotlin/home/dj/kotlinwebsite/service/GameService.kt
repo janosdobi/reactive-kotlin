@@ -1,9 +1,9 @@
 package home.dj.kotlinwebsite.service
 
 import home.dj.kotlinwebsite.model.*
-import home.dj.kotlinwebsite.persistence.document.Game
-import home.dj.kotlinwebsite.persistence.document.GameStatus.*
-import home.dj.kotlinwebsite.persistence.document.Player
+import home.dj.kotlinwebsite.model.Game
+import home.dj.kotlinwebsite.model.GameStatus.*
+import home.dj.kotlinwebsite.model.Player
 import home.dj.kotlinwebsite.repository.GameRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
@@ -40,7 +40,8 @@ class GameService(
                     game.players.map { PlayerDTO(it.name) },
                     game.status,
                     game.numberOfRounds,
-                    game.lengthOfRounds
+                    game.lengthOfRounds,
+                    game.actualRound
                 )
             }
             .doOnNext { gameEventManager.createNewPublisherForGame(it.code) }
@@ -102,7 +103,7 @@ class GameService(
                 val game = playerGameTuple.t2
                 game.players = game.players.minusElement(player)
                 if (game.players.isEmpty())
-                    gameRepository.delete(game).map { GameDTO("REMOVED", emptyList(), FINISHED, 0, 0) }
+                    gameRepository.delete(game).map { GameDTO("REMOVED", emptyList(), FINISHED, 0, 0, 0) }
                 else
                     gameRepository.save(game).map { savedGame ->
                         GameDTO(
@@ -110,7 +111,8 @@ class GameService(
                             savedGame.players.map { PlayerDTO(it.name) },
                             savedGame.status,
                             savedGame.numberOfRounds,
-                            savedGame.lengthOfRounds
+                            savedGame.lengthOfRounds,
+                            savedGame.actualRound
                         )
                     }
             }
@@ -132,20 +134,18 @@ class GameService(
                 game.lengthOfRounds = requestDTO.lengthOfRounds
                 gameRepository.save(game)
             }
-            .map { savedGame ->
-                GameDTO(
-                    savedGame.code,
-                    savedGame.players.map { PlayerDTO(it.name) },
-                    savedGame.status,
-                    savedGame.numberOfRounds,
-                    savedGame.lengthOfRounds
-                )
-            }
-            .doOnNext {
+            .doOnNext { savedGame ->
                 gameEventManager.publishEvent(
                     GameStartedEvent(
-                        it,
-                        it.code
+                        GameDTO(
+                            savedGame.code,
+                            savedGame.players.map { PlayerDTO(it.name) },
+                            savedGame.status,
+                            savedGame.numberOfRounds,
+                            savedGame.lengthOfRounds,
+                            savedGame.actualRound
+                        ),
+                        savedGame.code
                     )
                 )
             }
@@ -170,6 +170,20 @@ class GameService(
                     )
                 )
             }
+            .flatMap {
+                it.actualRound += 1
+                gameRepository.save(it)
+            }
+            .map { savedGame ->
+                GameDTO(
+                    savedGame.code,
+                    savedGame.players.map { PlayerDTO(it.name) },
+                    savedGame.status,
+                    savedGame.numberOfRounds,
+                    savedGame.lengthOfRounds,
+                    savedGame.actualRound
+                )
+            }
     }
 
     fun finishGame(request: Mono<FinishGameRequestDTO>): Mono<GameDTO> {
@@ -187,7 +201,8 @@ class GameService(
                     savedGame.players.map { PlayerDTO(it.name) },
                     savedGame.status,
                     savedGame.numberOfRounds,
-                    savedGame.lengthOfRounds
+                    savedGame.lengthOfRounds,
+                    savedGame.actualRound
                 )
             }
             .doOnNext {

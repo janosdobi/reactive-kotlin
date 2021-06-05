@@ -137,7 +137,7 @@ function startGame() {
         lengthOfRounds: lengthOfRounds,
         playerName: playerName
     }
-    if (numberOfRounds >= 3 && lengthOfRounds >= 60) {
+    if (numberOfRounds >= 3 && lengthOfRounds >= 1) {
         $.post({
             url: cleanUrl + "/api/v1/start/",
             headers: {

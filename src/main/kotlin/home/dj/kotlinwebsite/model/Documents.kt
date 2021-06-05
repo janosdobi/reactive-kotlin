@@ -1,4 +1,4 @@
-package home.dj.kotlinwebsite.persistence.document
+package home.dj.kotlinwebsite.model
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -29,6 +29,7 @@ data class Game @JsonCreator constructor(
     @JsonProperty("status") var status: GameStatus,
     @JsonProperty("numberOfRounds") var numberOfRounds: Int,
     @JsonProperty("lengthOfRounds") var lengthOfRounds: Int,
+    @JsonProperty("actualRound") var actualRound: Int = 1,
 ) : Serializable, EntityBase()
 
 enum class GameStatus {

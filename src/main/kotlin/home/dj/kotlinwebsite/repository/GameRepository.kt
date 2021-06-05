@@ -1,7 +1,6 @@
 package home.dj.kotlinwebsite.repository
 
-import home.dj.kotlinwebsite.persistence.document.Game
-import home.dj.kotlinwebsite.persistence.document.Player
+import home.dj.kotlinwebsite.model.Game
 import org.springframework.data.mongodb.repository.Query
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository
 import reactor.core.publisher.Flux

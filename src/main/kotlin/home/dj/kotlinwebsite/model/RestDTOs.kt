@@ -1,7 +1,5 @@
 package home.dj.kotlinwebsite.model
 
-import home.dj.kotlinwebsite.persistence.document.GameStatus
-
 data class AuthRequest(
     val username: String,
     val password: String
@@ -16,7 +14,8 @@ data class GameDTO(
     val players: Collection<PlayerDTO>,
     val status: GameStatus,
     val numberOfRounds: Int,
-    val lengthOfRounds: Int
+    val lengthOfRounds: Int,
+    val actualRound: Int
 )
 
 data class PlayerDTO(
