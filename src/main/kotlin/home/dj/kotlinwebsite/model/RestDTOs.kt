@@ -53,3 +53,7 @@ data class JoinGameResponseDTO(
     val message: String,
     val gameCode: String
 )
+
+data class NextRoundRequestDTO(
+    val gameCode: String
+)

@@ -101,11 +101,8 @@ function handleEvent(data) {
     }
 
     function handleRoundStarted(data) {
-        $("#game").append(
-            `<div id="round">
-                <p class="h2 text-center text-light">Round ${data.roundNumber}</p>
-                <p class="d-inline p text-center text-light float-right">Time left: <span id="timer">${data.roundLength}</span></p>
-            </div>`
+        $("#round").html(`<p class="h2 text-center text-light">Round ${data.roundNumber}</p>
+                                <p class="d-inline p text-center text-light float-right">Time left: <span id="timer">${data.roundLength}</span></p>`
         )
         const timerElement = $("#timer");
         let timeLeft = data.roundLength
@@ -116,11 +113,15 @@ function handleEvent(data) {
             timeLeft -= 1;
             timerElement.text(timeLeft);
         }, 1000);
-
     }
 
     function handleRoundFinished(data) {
-        $('#round').html(`<p class="h2 text-center text-light">Round ${data.roundNumber} finished!</p>`)
+        if (data.roundNumber < data.totalRounds) {
+            $('#round').html(`<p class="h2 text-center text-light">Round ${data.roundNumber} finished!</p>
+                                <button id="nextRound" type="submit" class="btn btn-light btn-login" onclick="nextRound()">next round</button>`);
+        } else {
+            $('#round').html(`<p class="h2 text-center text-light">Game over!</p>`);
+        }
     }
 }
 
@@ -151,23 +152,6 @@ function startGame() {
     }
 }
 
-function finishGame() {
-    const url = window.location.href;
-    const cleanUrl = url.slice(0, url.indexOf('/game/'));
-    const token = sessionStorage.getItem('auth');
-    const requestBody = {
-        gameCode: sessionStorage.getItem('gameCode')
-    }
-    $.post({
-        url: cleanUrl + "/api/v1/finish/",
-        headers: {
-            "Authorization": "Bearer " + token,
-            "Content-Type": "application/json"
-        },
-        data: JSON.stringify(requestBody)
-    });
-}
-
 function quitGame() {
     const url = window.location.href;
     const cleanUrl = url.slice(0, url.indexOf('/game/'));
@@ -186,5 +170,22 @@ function quitGame() {
         success: function () {
             window.close();
         }
+    });
+}
+
+function nextRound() {
+    const url = window.location.href;
+    const cleanUrl = url.slice(0, url.indexOf('/game/'));
+    const token = sessionStorage.getItem('auth');
+    const requestBody = {
+        gameCode: sessionStorage.getItem('gameCode')
+    }
+    $.post({
+        url: cleanUrl + "/api/v1/next-round/",
+        headers: {
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json"
+        },
+        data: JSON.stringify(requestBody)
     });
 }

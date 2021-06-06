@@ -1,9 +1,7 @@
 package home.dj.kotlinwebsite.service
 
 import home.dj.kotlinwebsite.model.*
-import home.dj.kotlinwebsite.model.Game
 import home.dj.kotlinwebsite.model.GameStatus.*
-import home.dj.kotlinwebsite.model.Player
 import home.dj.kotlinwebsite.repository.GameRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
@@ -33,8 +31,7 @@ class GameService(
                         0
                     )
                 )
-            }
-            .map { game ->
+            }.map { game ->
                 GameDTO(
                     game.code,
                     game.players.map { PlayerDTO(it.name) },
@@ -43,8 +40,7 @@ class GameService(
                     game.lengthOfRounds,
                     game.actualRound
                 )
-            }
-            .doOnNext { gameEventManager.createNewPublisherForGame(it.code) }
+            }.doOnNext { gameEventManager.createNewPublisherForGame(it.code) }
     }
 
     fun joinGame(request: Mono<JoinGameRequestDTO>): Mono<JoinGameResponseDTO> {
@@ -55,8 +51,7 @@ class GameService(
                     gameRepository.findGameByCode(it.gameCode)
                         .switchIfEmpty(Mono.error(IllegalArgumentException("Game does not exist!")))
                 )
-            }
-            .flatMap { playerGameTuple ->
+            }.flatMap { playerGameTuple ->
                 val game = playerGameTuple.t2
                 val player = playerGameTuple.t1
                 if (game.status == READY) {
@@ -93,12 +88,10 @@ class GameService(
                         it.gameCode
                     )
                 )
-            }
-            .flatMap {
+            }.flatMap {
                 val player = Player(it.playerName)
                 Mono.zip(Mono.just(player), gameRepository.findGameByCode(it.gameCode))
-            }
-            .flatMap { playerGameTuple ->
+            }.flatMap { playerGameTuple ->
                 val player = playerGameTuple.t1
                 val game = playerGameTuple.t2
                 game.players = game.players.minusElement(player)
@@ -125,16 +118,14 @@ class GameService(
                     gameRepository.findGameByCode(it.gameCode),
                     Mono.just(it)
                 )
-            }
-            .flatMap { gameRequestTuple ->
+            }.flatMap { gameRequestTuple ->
                 val game = gameRequestTuple.t1
                 val requestDTO = gameRequestTuple.t2
                 game.status = STARTED
                 game.numberOfRounds = requestDTO.numberOfRounds
                 game.lengthOfRounds = requestDTO.lengthOfRounds
                 gameRepository.save(game)
-            }
-            .doOnNext { savedGame ->
+            }.doOnNext { savedGame ->
                 gameEventManager.publishEvent(
                     GameStartedEvent(
                         GameDTO(
@@ -148,8 +139,7 @@ class GameService(
                         savedGame.code
                     )
                 )
-            }
-            .delayElement(Duration.ofMillis(2000))
+            }.delayElement(Duration.ofMillis(2000))
             .doOnSuccess {
                 gameEventManager.publishEvent(
                     RoundStartedEvent(
@@ -158,23 +148,17 @@ class GameService(
                         it.code
                     )
                 )
-            }
-            .delayUntil {
+            }.delayUntil {
                 Mono.delay(Duration.ofSeconds(it.lengthOfRounds.toLong()))
-            }
-            .doOnSuccess {
+            }.doOnSuccess {
                 gameEventManager.publishEvent(
                     RoundFinishedEvent(
                         1,
+                        it.numberOfRounds,
                         it.code
                     )
                 )
-            }
-            .flatMap {
-                it.actualRound += 1
-                gameRepository.save(it)
-            }
-            .map { savedGame ->
+            }.map { savedGame ->
                 GameDTO(
                     savedGame.code,
                     savedGame.players.map { PlayerDTO(it.name) },
@@ -190,12 +174,10 @@ class GameService(
         return request
             .flatMap {
                 gameRepository.findGameByCode(it.gameCode)
-            }
-            .flatMap { game ->
+            }.flatMap { game ->
                 game.status = FINISHED
                 gameRepository.save(game)
-            }
-            .map { savedGame ->
+            }.map { savedGame ->
                 GameDTO(
                     savedGame.code,
                     savedGame.players.map { PlayerDTO(it.name) },
@@ -204,9 +186,45 @@ class GameService(
                     savedGame.lengthOfRounds,
                     savedGame.actualRound
                 )
-            }
-            .doOnNext {
+            }.doOnNext {
                 gameEventManager.publishEvent(GameFinishedEvent(it, it.code))
+            }
+    }
+
+    fun nextRound(request: Mono<NextRoundRequestDTO>): Mono<GameDTO> {
+        return request
+            .flatMap {
+                gameRepository.findGameByCode(it.gameCode)
+            }.flatMap {
+                it.actualRound += 1
+                gameRepository.save(it)
+            }.doOnNext {
+                gameEventManager.publishEvent(
+                    RoundStartedEvent(
+                        it.actualRound,
+                        it.lengthOfRounds,
+                        it.code
+                    )
+                )
+            }.delayUntil {
+                Mono.delay(Duration.ofSeconds(it.lengthOfRounds.toLong()))
+            }.doOnSuccess {
+                gameEventManager.publishEvent(
+                    RoundFinishedEvent(
+                        it.actualRound,
+                        it.numberOfRounds,
+                        it.code
+                    )
+                )
+            }.map { savedGame ->
+                GameDTO(
+                    savedGame.code,
+                    savedGame.players.map { PlayerDTO(it.name) },
+                    savedGame.status,
+                    savedGame.numberOfRounds,
+                    savedGame.lengthOfRounds,
+                    savedGame.actualRound
+                )
             }
     }
 }
