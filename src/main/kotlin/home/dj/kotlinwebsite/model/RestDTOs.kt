@@ -1,26 +1,12 @@
 package home.dj.kotlinwebsite.model
 
-data class AuthRequest(
+data class AuthRequestDTO(
     val username: String,
     val password: String
 )
 
-data class AuthResponse(
+data class AuthResponseDTO(
     val token: String
-)
-
-data class GameDTO(
-    val code: String,
-    val players: Collection<PlayerDTO>,
-    val status: GameStatus,
-    val numberOfRounds: Int,
-    val lengthOfRounds: Int,
-    val actualRound: Int
-)
-
-data class PlayerDTO(
-    val name: String,
-    val score: Int = 0
 )
 
 data class NewGameRequestDTO(
@@ -36,7 +22,8 @@ data class StartGameRequestDTO(
     val gameCode: String,
     val numberOfRounds: Int,
     val lengthOfRounds: Int,
-    val playerName: String
+    val playerName: String,
+    val questions: Collection<QuestionDTO>
 )
 
 data class FinishGameRequestDTO(

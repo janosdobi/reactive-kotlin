@@ -124,6 +124,13 @@ class GameService(
                 game.status = STARTED
                 game.numberOfRounds = requestDTO.numberOfRounds
                 game.lengthOfRounds = requestDTO.lengthOfRounds
+                game.questions = requestDTO.questions.map { questionDTO ->
+                    Question(
+                        questionDTO.correct_answer,
+                        questionDTO.incorrect_answers,
+                        questionDTO.question
+                    )
+                }
                 gameRepository.save(game)
             }.doOnNext { savedGame ->
                 gameEventManager.publishEvent(

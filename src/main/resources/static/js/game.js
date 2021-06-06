@@ -129,27 +129,34 @@ function startGame() {
     const url = window.location.href;
     const cleanUrl = url.slice(0, url.indexOf('/game/'));
     const token = sessionStorage.getItem('auth');
-    const numberOfRounds = $("#noRounds").val()
-    const lengthOfRounds = $("#lengthRounds").val()
-    const playerName = sessionStorage.getItem('player')
-    const requestBody = {
-        gameCode: sessionStorage.getItem('gameCode'),
-        numberOfRounds: numberOfRounds,
-        lengthOfRounds: lengthOfRounds,
-        playerName: playerName
-    }
-    if (numberOfRounds >= 3 && lengthOfRounds >= 1) {
-        $.post({
-            url: cleanUrl + "/api/v1/start/",
-            headers: {
-                "Authorization": "Bearer " + token,
-                "Content-Type": "application/json"
-            },
-            data: JSON.stringify(requestBody)
-        });
-    } else {
-        alert("Please select number & length of rounds!")
-    }
+    const numberOfRounds = $("#noRounds").val();
+    const lengthOfRounds = $("#lengthRounds").val();
+    const playerName = sessionStorage.getItem('player');
+    //TODO remove this horrible hack
+    $.get({
+        url: `https://opentdb.com/api.php?amount=${numberOfRounds}&type=multiple&encode=base64`,
+        success: function (response) {
+            const requestBody = {
+                gameCode: sessionStorage.getItem('gameCode'),
+                numberOfRounds: numberOfRounds,
+                lengthOfRounds: lengthOfRounds,
+                playerName: playerName,
+                questions: response.results
+            }
+            if (numberOfRounds >= 3 && lengthOfRounds >= 1) {
+                $.post({
+                    url: cleanUrl + "/api/v1/start/",
+                    headers: {
+                        "Authorization": "Bearer " + token,
+                        "Content-Type": "application/json"
+                    },
+                    data: JSON.stringify(requestBody)
+                });
+            } else {
+                alert("Please select number & length of rounds!")
+            }
+        }
+    });
 }
 
 function quitGame() {

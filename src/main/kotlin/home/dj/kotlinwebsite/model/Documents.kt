@@ -30,6 +30,7 @@ data class Game @JsonCreator constructor(
     @JsonProperty("numberOfRounds") var numberOfRounds: Int,
     @JsonProperty("lengthOfRounds") var lengthOfRounds: Int,
     @JsonProperty("actualRound") var actualRound: Int = 1,
+    @JsonProperty("questions") var questions: Collection<Question> = emptyList()
 ) : Serializable, EntityBase()
 
 enum class GameStatus {
@@ -41,4 +42,10 @@ enum class GameStatus {
 data class Player @JsonCreator constructor(
     @JsonProperty("name") var name: String,
     @JsonProperty("score") var score: Int = 0
+) : Serializable, EntityBase()
+
+data class Question @JsonCreator constructor(
+    @JsonProperty("correctAnswer") var correctAnswer: String,
+    @JsonProperty("incorrectAnswers") var incorrectAnswers: Collection<String>,
+    @JsonProperty("question") var question: String
 ) : Serializable, EntityBase()
